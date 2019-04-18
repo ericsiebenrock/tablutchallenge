@@ -2,9 +2,11 @@ package client
 
 
 import javafx.application.Application.launch
+import server.ExtendedState
+import server.State
 
-class TablutWhiteClient(player: String, name: String) : TablutClient(player,name) {
-
+class TablutWhiteClient(player : String, name : String) : TablutClient(player,name) {
+    private lateinit var listaNodi:ArrayList<ExtendedState>;
 
 
     override fun run() = runBlocking{
@@ -14,11 +16,24 @@ class TablutWhiteClient(player: String, name: String) : TablutClient(player,name
         */
         launch(Dispatchers.Default) {
             //esecuzione del algoritmo min-max e scelta del nodo
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            this.minMaxDecision(currentState)
         }
     }
 
+}
 
+companion object {
 
+    fun minMaxDecision(stato : ExtendedState){
+
+    }
+
+    fun maxValue(stato : ExtendedState){
+
+    }
+
+    fun minValue(stato : ExtendedState){
+
+    }
 
 }
