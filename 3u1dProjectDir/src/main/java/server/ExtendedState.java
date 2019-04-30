@@ -6,21 +6,37 @@ import java.util.List;
 /*
 estensioen della classe state per compatibilita con algoritmo min-max
  */
-public class ExtendedState extends State {
+public class ExtendedState{
 
-    List<State> getActions(){
-        List<State> actions = new LinkedList<>();
+    private StateTablut state;
+
+    public void setState(State state){
+        this.state=(StateTablut)state;
+    }
+
+    public StateTablut getState() {
+        return state;
+    }
+
+    public Action getAction(ExtendedState oldState){
+        Action a = null;
+        // DA FARE
+        return a;
+    }
+
+    public List<ExtendedState> getActions(){
+        List<ExtendedState> actions = new LinkedList<>();
         //generate actions
         return actions;
     }
 
-    boolean isTerminal() {
+    public boolean isTerminal() {
         //add some logic
         return false;
     }
 
-    double getUtility() {
-        //add some logic
+    public double getUtility() {
+        //add some logic ritorna un double a partire dallo stato (euristica)
         return 0;
     }
 
