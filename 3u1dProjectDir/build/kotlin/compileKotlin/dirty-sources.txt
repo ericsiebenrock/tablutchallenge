@@ -1,1 +1,1 @@
-/home/giacomo/3U1DTablutClient_copia/3u1dProjectDir/src/main/kotlin/client/TablutWhiteClient.kt
+/home/davide/Scrivania/3u1dProjectDir/src/main/kotlin/client/TablutWhiteClient.kt
