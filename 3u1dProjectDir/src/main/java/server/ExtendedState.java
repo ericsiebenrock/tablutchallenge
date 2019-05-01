@@ -92,22 +92,24 @@ public class ExtendedState{
                     if(isBlackCamp(newRow,column)) continue;
                 }
                 if(movingPiece==State.Pawn.BLACK){
-                    //controllo che non entri negli altri accampamenti. Se è nell accampamento si può muovere in esso.
+                    //controllo che non entri negli altri accampamenti. Se è nell accampamento (isBlackCamp(row, column)) si può muovere in esso.
                     //la distanza massima di caselle dello stesso accampamento infatti è 2
-                    if(isBlackCamp(newRow,column) && Math.abs(newRow-row)>2) continue;//prossimo ciclo for
+                    if(isBlackCamp(row, column) && isBlackCamp(newRow,column) && Math.abs(newRow-row)>2) continue;//prossimo ciclo for
                 }
-                //controllo che le caselle in mezzo non siano occupate
+                //riga prima (spostamento verso alto)
                 if(newRow<row){
+                    //controllo che le caselle in mezzo non siano occupate o non sia trono o accampamento
                     for (int i = (newRow + 1); i < row; i++) {
-                        if (this.state.board[i][column] != State.Pawn.EMPTY) {
-                            legitMove = false; //casella in mezzo non vuota
+                        if (this.state.board[i][column] != State.Pawn.EMPTY || this.state.board[i][column]==State.Pawn.THRONE || isBlackCamp(i,column)) {
+                            legitMove = false; //casella in mezzo non vuota oppure trono oppure accampamento
                             break;
                         } else legitMove = true;
                     }
                 }
+                //riga dopo (spostamento verso basso)
                 else{
                     for(int i=(newRow-1); i>row; i--) {
-                        if (this.state.board[i][column] != State.Pawn.EMPTY) {
+                        if (this.state.board[i][column] != State.Pawn.EMPTY || this.state.board[row][i]==State.Pawn.THRONE || isBlackCamp(row,i)) {
                             legitMove = false; //casella in mezzo non vuota
                             break;
                         } else legitMove = true;
@@ -138,22 +140,24 @@ public class ExtendedState{
                     if(isBlackCamp(row,newColumn)) continue;//prossimo ciclo for
                 }
                 if(movingPiece==State.Pawn.BLACK){
-                    //controllo che non entri negli altri accampamenti. Se è nell accampamento si può muovere in esso.
+                    //controllo che non entri negli altri accampamenti. Se è nell accampamento (isBlackCamp(row, column)) si può muovere in esso.
                     //la distanza massima di caselle dello stesso accampamento infatti è 2
-                    if(isBlackCamp(row,newColumn) && Math.abs(newColumn-column)>2) continue;
+                    if(isBlackCamp(row, column) && isBlackCamp(row,newColumn) && Math.abs(newColumn-column)>2) continue;
                 }
-                //controllo che le caselle in mezzo non siano occupate
+                //colonna prima (spostamento a sinistra)
                 if(newColumn<column){
+                    //controllo che le caselle in mezzo non siano occupate o non sia trono o accampamento
                     for (int i = (newColumn + 1); i < column; i++) {
-                        if (this.state.board[row][i] != State.Pawn.EMPTY) {
-                            legitMove = false; //casella in mezzo non vuota
+                        if (this.state.board[row][i] != State.Pawn.EMPTY || this.state.board[row][i]==State.Pawn.THRONE || isBlackCamp(row,i)) {
+                            legitMove = false; //casella in mezzo non vuota oppure trono oppure accampamento
                             break;
                         } else legitMove = true;
                     }
                 }
+                //colonna dopo (spostamento a destra)
                 else{
                     for(int i=(newColumn-1); i>column; i--) {
-                        if (this.state.board[row][i] != State.Pawn.EMPTY) {
+                        if (this.state.board[row][i] != State.Pawn.EMPTY || this.state.board[row][i]==State.Pawn.THRONE || isBlackCamp(row,i)) {
                             legitMove = false; //casella in mezzo non vuota
                             break;
                         } else legitMove = true;
