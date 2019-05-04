@@ -11,6 +11,8 @@ public class ExtendedState{
 
     private StateTablut state;
 
+    private double valoreProvvisorio;
+
     public void setState(State state){
         this.state=(StateTablut)state;
     }
@@ -170,6 +172,7 @@ public class ExtendedState{
                     StateTablut newWrappedState= new StateTablut();
                     newWrappedState.setBoard(newBoard);
                     if(state.turn==State.Turn.WHITE) newWrappedState.setTurn(State.Turn.BLACK);
+                    else newWrappedState.setTurn(State.Turn.WHITE);
                     ExtendedState newState= new ExtendedState();
                     newState.setState(newWrappedState);
                     actions.add(newState);
@@ -207,12 +210,84 @@ public class ExtendedState{
         return res;
     }
 
-    public boolean isTerminal() {
-        //aggiungere controllo se tempo sta per scadere, in quel caso considerare come fine albero e restituire true
-        if (this.getState().getTurn().equals(State.Turn.BLACKWIN) || this.getState().getTurn().equals(State.Turn.WHITEWIN) || this.getState().getTurn().equals(State.Turn.DRAW))
-            return true;
-        else
-            return false;
+    public double getValoreProvvisorio() {
+        return valoreProvvisorio;
+    }
+
+    public void setValoreProvvisorio(double valoreProvvisorio) {
+        this.valoreProvvisorio = valoreProvvisorio;
+    }
+
+
+    //restituisce: -1 sconfitta, 0 pareggio, 1 vittoria, 2 stato terminale comunque (ci fermiamo TODO), -2 non è terminale
+    public int isTerminal(String player) {
+        int whiteNum=0, blackNum=0, kingRow=-1, kingCol=-1;
+        String kingRowCol="";
+
+        for (int row = 0; row < this.state.board.length; row++) {
+            //ciclo sulle colonne della riga
+            for (int column = 0; column < this.state.board.length; column++) {
+                if(state.board[row][column]==State.Pawn.WHITE) whiteNum++;
+                if(state.board[row][column]==State.Pawn.KING){
+                    whiteNum++;
+                    kingRow=row; kingCol=column;
+                    kingRowCol=""+row+""+column;
+                }
+                if(state.board[row][column]==State.Pawn.BLACK) blackNum++;
+            }
+        }
+
+        if(whiteNum==0){
+            if(player=="WHITE") return -1;
+            else return 1;
+        }
+        else if(blackNum==0){
+            if(player=="BLACK") return -1;
+            else return 1;
+        }
+        else if(kingRowCol.equals("01")||kingRowCol.equals("02")||kingRowCol.equals("06")||kingRowCol.equals("07")||kingRowCol.equals("10")||kingRowCol.equals("18")||kingRowCol.equals("20")||kingRowCol.equals("28")||kingRowCol.equals("60")||kingRowCol.equals("68")||kingRowCol.equals("70")||kingRowCol.equals("78")||kingRowCol.equals("81")||kingRowCol.equals("82")||kingRowCol.equals("86")||kingRowCol.equals("87")){
+            //il re è scappato
+            if(player=="WHITE") return 1;
+            else return -1;
+        }
+
+        //caso re mangiato
+        if(kingRowCol.equals("44") && state.board[3][4]==State.Pawn.BLACK && state.board[5][4]==State.Pawn.BLACK && state.board[4][3]==State.Pawn.BLACK && state.board[4][5]==State.Pawn.BLACK){
+            //re mangiato nel trono
+            if(player=="BLACK") return 1;
+            else return -1;
+        }
+        if(kingRowCol.equals("34") && state.board[2][4]==State.Pawn.BLACK && state.board[3][3]==State.Pawn.BLACK && state.board[3][5]==State.Pawn.BLACK) {
+            //re mangiato da lato superiore trono
+            if(player=="BLACK") return 1;
+            else return -1;
+        }
+        if(kingRowCol.equals("43") && state.board[3][3]==State.Pawn.BLACK && state.board[4][2]==State.Pawn.BLACK && state.board[5][3]==State.Pawn.BLACK){
+            //re mangiato da lato sinistro trono
+            if(player=="BLACK") return 1;
+            else return -1;
+        }
+        if(kingRowCol.equals("54") && state.board[5][3]==State.Pawn.BLACK && state.board[6][4]==State.Pawn.BLACK && state.board[5][5]==State.Pawn.BLACK){
+            //re mangiato da lato inferiore trono
+            if(player=="BLACK") return 1;
+            else return -1;
+        }
+        if(kingRowCol.equals("45") && state.board[3][5]==State.Pawn.BLACK && state.board[4][5]==State.Pawn.BLACK && state.board[5][5]==State.Pawn.BLACK){
+            //re mangiato da lato destro trono
+            if(player=="BLACK") return 1;
+            else return -1;
+        }
+        if((state.board[kingRow-1][kingCol]==State.Pawn.BLACK || isBlackCamp(kingRow-1,kingCol)) && (state.board[kingRow+1][kingCol]==State.Pawn.BLACK || isBlackCamp(kingRow+1,kingCol))){
+            //re circondato in verticale
+            if(player=="BLACK") return 1;
+            else return -1;
+        }
+        if((state.board[kingRow][kingCol-1]==State.Pawn.BLACK || isBlackCamp(kingRow,kingCol-1)) && (state.board[kingRow][kingCol+1]==State.Pawn.BLACK || isBlackCamp(kingRow,kingCol+1))){
+            //re circondato in orizzontale
+            if(player=="BLACK") return 1;
+            else return -1;
+        }
+        return -2;
     }
 
     public double getUtility() {

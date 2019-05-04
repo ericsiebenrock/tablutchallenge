@@ -13,10 +13,16 @@ import server.StateTablut
 import java.io.IOException
 import java.lang.Double.valueOf
 import kotlin.math.absoluteValue
+import kotlin.math.max
+import kotlin.math.min
+import sun.misc.VM.getState
+
+
 
 class MyTablutClient(player : String, name : String, game: Int) : TablutClient(player,name) {
     private lateinit var listaNodi: ArrayList<ExtendedState>
     private var termina = false
+    private lateinit var extendedOldState : ExtendedState
 
     override fun run() = runBlocking {
         /*launch: lancia la coroutine nello stesso scope della coroutine che esegue run
@@ -28,8 +34,8 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
-        var extendedOldState = ExtendedState()
+        listaNodi= ArrayList()
+        extendedOldState = ExtendedState()
         extendedOldState.setState(StateTablut())
         extendedOldState.state.turn = State.Turn.WHITE
         println("Ashton Tablut game")
@@ -72,7 +78,7 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
             if (player == State.Turn.WHITE) {
                 // è il mio turno
                 if (currentState.turn == State.Turn.WHITE) {
-                    var extendedNewState = minMaxDecision(extendedOldState)
+                    var extendedNewState = minMaxDecision2(extendedOldState)
                     var a = extendedNewState.getAction(extendedOldState)
                     println("Mossa scelta: $a")
                     try {
@@ -105,7 +111,7 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
             } else {
                 // è il mio turno
                 if (currentState.turn == State.Turn.BLACK) {
-                    var extendedNewState = minMaxDecision(extendedOldState)
+                    var extendedNewState = minMaxDecision2(extendedOldState)
                     var a = extendedNewState.getAction(extendedOldState)
                     println("Mossa scelta: $a")
                     try {
@@ -138,23 +144,88 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
         }
     }
 
-    fun minMaxDecision(extendedState: ExtendedState) : ExtendedState {
-        return extendedState.getActions().stream().max(Comparator.comparing(::minValue)).get()
+    fun minMaxDecision2(state: ExtendedState): Double{
+        listaNodi.clear()
+        var v:Double
+        if(state.state.turn==player) {
+            v=maxValue3(state)
+
+        }
+        else v=minValue3(state)
     }
 
-    fun maxValue(state: ExtendedState) : Double {
-        if(state.isTerminal() || termina){
-            return state.getUtility()
+
+        fun maxValue3(state: ExtendedState):Double{
+            var terminale=state.isTerminal(player.toString())
+            if(terminale != -2 || termina){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
+                var numWhite=0
+                var numBlack=0
+                for (i in 0 until 8)
+                    for (j in 0 until 8) {
+                        if (extendedOldState.state.board[i][j] === State.Pawn.WHITE)
+                            numWhite++
+                        if (extendedOldState.state.board[i][j] === State.Pawn.BLACK)
+                            numBlack++
+                    }
+                val ev=state.getUtility(player.toString(), terminale, numWhite, numBlack)
+                state.valoreProvvisorio=ev
+                println("nodo terminale: ${state.state.boardString()}, valore: ${ev}")
+                return ev
+            }
+            println("nodo max: ${state.state.boardString()}")
+            v = Double.NEGATIVE_INFINITY
+            state.getActions().forEach {
+                v = max(v,minValue3(it))
+                //listaNodi.remove(it)
+            }
+            state.valoreProvvisorio=v
+            return v
         }
-        return state.getActions().stream().map(::minValue).max(Comparator.comparing(Double::toDouble)).get();
+
+    fun minValue3(state: ExtendedState):Double{
+        if(terminale != -2 || termina){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
+            var numWhite=0
+            var numBlack=0
+            for (i in 0 until 8)
+                for (j in 0 until 8) {
+                    if (extendedOldState.state.board[i][j] === State.Pawn.WHITE)
+                        numWhite++
+                    if (extendedOldState.state.board[i][j] === State.Pawn.BLACK)
+                        numBlack++
+                }
+            val ev=state.getUtility(player.toString(), terminale, numWhite, numBlack)
+            state.valoreProvvisorio=ev
+            println("nodo terminale: ${state.state.boardString()}, valore: ${ev}")
+            return ev
+        }
+        println("nodo min: ${state.state.boardString()}")
+        v = Double.POSITIVE_INFINITY
+        state.getActions().forEach {
+            v = min(v,maxValue3(it))
+            //listaNodi.remove(it)
+        }
+        state.valoreProvvisorio=v
+        return v
     }
 
-    fun minValue(state: ExtendedState) : Double{
-        if(state.isTerminal() || termina){
-            return state.getUtility()
+       /*
+        fun minMaxDecision(state: ExtendedState) : ExtendedState {
+            return extendedState.getActions().stream().max(Comparator.comparing(::minValue)).get()
         }
-        return state.getActions().stream().map(::maxValue).min(Comparator.comparing(Double::toDouble)).get();
-    }
+
+       fun maxValue(state: ExtendedState) : Double {
+            if(state.isTerminal() || termina){
+                return state.getUtility()
+            }
+            return state.getActions().stream().map(::minValue).max(Comparator.comparing(Double::toDouble)).get();
+        }
+
+        fun minValue(state: ExtendedState) : Double{
+            if(state.isTerminal() || termina){
+                return state.getUtility()
+            }
+            return state.getActions().stream().map(::maxValue).min(Comparator.comparing(Double::toDouble)).get();
+        }*/
 
     companion object{
         fun main(args: Array<String>) {
