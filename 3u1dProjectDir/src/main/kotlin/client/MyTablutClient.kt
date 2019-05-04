@@ -3,25 +3,18 @@ package client
 
 //import javafx.application.Application.launch
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.ticker
-import server.Action
 import server.ExtendedState
 import server.State
 import server.StateTablut
 import java.io.IOException
-import java.lang.Double.valueOf
-import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
-import sun.misc.VM.getState
-
 
 
 class MyTablutClient(player : String, name : String, game: Int) : TablutClient(player,name) {
     private lateinit var listaNodi: ArrayList<ExtendedState>
     private var termina = false
+    private lateinit var initialState:ExtendedState
     private lateinit var extendedOldState : ExtendedState
 
     override fun run() = runBlocking {
@@ -144,18 +137,27 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
         }
     }
 
-    fun minMaxDecision2(state: ExtendedState): Double{
+    fun minMaxDecision2(state: ExtendedState): ExtendedState{
+        this.initialState=state
         listaNodi.clear()
+        var nextState:ExtendedState=ExtendedState()
         var v:Double
+
         if(state.state.turn==player) {
             v=maxValue3(state)
 
         }
         else v=minValue3(state)
+        listaNodi.forEach{
+            if(it.valoreAssegnato==v) nextState=it
+        }
+
+        return nextState
     }
 
 
         fun maxValue3(state: ExtendedState):Double{
+            var v:Double
             var terminale=state.isTerminal(player.toString())
             if(terminale != -2 || termina){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
                 var numWhite=0
@@ -168,21 +170,31 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
                             numBlack++
                     }
                 val ev=state.getUtility(player.toString(), terminale, numWhite, numBlack)
-                state.valoreProvvisorio=ev
+                state.valoreAssegnato =ev
                 println("nodo terminale: ${state.state.boardString()}, valore: ${ev}")
                 return ev
             }
             println("nodo max: ${state.state.boardString()}")
             v = Double.NEGATIVE_INFINITY
-            state.getActions().forEach {
-                v = max(v,minValue3(it))
-                //listaNodi.remove(it)
+            if(state==initialState) {
+                state.getActions().forEach {
+                    //se sono i figli dello stato attuale del gioco li salvo in listaNodi per scegliere il migliore dopo
+                    listaNodi.add(it)
+                    v = max(v, minValue3(it))
+                }
             }
-            state.valoreProvvisorio=v
+            else{
+                state.getActions().forEach {
+                    v = max(v, minValue3(it))
+                }
+            }
+            state.valoreAssegnato =v
             return v
         }
 
     fun minValue3(state: ExtendedState):Double{
+        var v:Double
+        var terminale=state.isTerminal(player.toString())
         if(terminale != -2 || termina){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
             var numWhite=0
             var numBlack=0
@@ -194,17 +206,25 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
                         numBlack++
                 }
             val ev=state.getUtility(player.toString(), terminale, numWhite, numBlack)
-            state.valoreProvvisorio=ev
+            state.valoreAssegnato =ev
             println("nodo terminale: ${state.state.boardString()}, valore: ${ev}")
             return ev
         }
         println("nodo min: ${state.state.boardString()}")
         v = Double.POSITIVE_INFINITY
-        state.getActions().forEach {
-            v = min(v,maxValue3(it))
-            //listaNodi.remove(it)
+        if(state==initialState) {
+            state.getActions().forEach {
+                //se sono i figli dello stato attuale del gioco li salvo in listaNodi per scegliere il migliore dopo
+                listaNodi.add(it)
+                v = min(v, maxValue3(it))
+            }
         }
-        state.valoreProvvisorio=v
+        else{
+            state.getActions().forEach {
+                v = min(v, maxValue3(it))
+            }
+        }
+        state.valoreAssegnato =v
         return v
     }
 

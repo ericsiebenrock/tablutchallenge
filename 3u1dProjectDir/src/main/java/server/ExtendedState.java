@@ -11,7 +11,7 @@ public class ExtendedState{
 
     private StateTablut state;
 
-    private double valoreProvvisorio;
+    private double valoreAssegnato;
 
     public void setState(State state){
         this.state=(StateTablut)state;
@@ -210,12 +210,12 @@ public class ExtendedState{
         return res;
     }
 
-    public double getValoreProvvisorio() {
-        return valoreProvvisorio;
+    public double getValoreAssegnato() {
+        return valoreAssegnato;
     }
 
-    public void setValoreProvvisorio(double valoreProvvisorio) {
-        this.valoreProvvisorio = valoreProvvisorio;
+    public void setValoreAssegnato(double valoreAssegnato) {
+        this.valoreAssegnato = valoreAssegnato;
     }
 
 
@@ -290,7 +290,7 @@ public class ExtendedState{
         return -2;
     }
 
-    public double getUtility() {
+    public double getUtility(String player, int terminale, int numWhite, int numBlack) {
         //add some logic ritorna un double a partire dallo stato (euristica)
         return 0;
     }
