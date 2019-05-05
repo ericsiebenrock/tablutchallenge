@@ -121,6 +121,7 @@ public class ExtendedState{
                     State.Pawn newBoard[][]=this.state.board.clone();
                     newBoard[row][column]=State.Pawn.EMPTY;
                     newBoard[newRow][column]=movingPiece;
+                    newBoard=mangia(newBoard, newRow, column, movingPiece); // elimina le pedine mangiate se ce ne sono
                     StateTablut newWrappedState= new StateTablut();
                     newWrappedState.setBoard(newBoard);
                     if(state.turn==State.Turn.WHITE) newWrappedState.setTurn(State.Turn.BLACK);
@@ -169,6 +170,7 @@ public class ExtendedState{
                     State.Pawn newBoard[][]=this.state.board.clone();
                     newBoard[row][column]=State.Pawn.EMPTY;
                     newBoard[row][newColumn]=movingPiece;
+                    newBoard=mangia(newBoard, row, newColumn, movingPiece); // elimina le pedine mangiate se ce ne sono
                     StateTablut newWrappedState= new StateTablut();
                     newWrappedState.setBoard(newBoard);
                     if(state.turn==State.Turn.WHITE) newWrappedState.setTurn(State.Turn.BLACK);
@@ -180,7 +182,7 @@ public class ExtendedState{
             }
         }
     }
-    
+
     private boolean isBlackCamp(int row, int column){
         boolean res=false;
         switch (row){
@@ -209,6 +211,106 @@ public class ExtendedState{
         }
         return res;
     }
+
+    private State.Pawn[][] mangia(State.Pawn[][] board, int newRow, int newColumn, State.Pawn movingPiece) {
+        String rc = "" + newRow + newColumn;
+        if(movingPiece == State.Pawn.WHITE){
+            if(newRow<7){ // la pedina non è al bordo sotto o nella penultima riga
+                if(board[newRow+1][newColumn] == State.Pawn.BLACK && (board[newRow+2][newColumn] == State.Pawn.WHITE || isBlackCamp(newRow+2, newColumn))){ //viene mangiata la nera sotto
+                    board[newRow+1][newColumn] = State.Pawn.EMPTY;
+                }
+            }
+            if(newRow>1){ // la pedina non è al bordo sopra o nella seconda riga
+                if(board[newRow-1][newColumn] == State.Pawn.BLACK && (board[newRow-2][newColumn] == State.Pawn.WHITE || isBlackCamp(newRow-2, newColumn))){ //viene mangiata la nera sopra
+                    board[newRow-1][newColumn] = State.Pawn.EMPTY;
+                }
+            }
+            if(newColumn<7){ // la pedina non è al bordo destro o nella penultima colonna
+                if(board[newRow][newColumn+1] == State.Pawn.BLACK && (board[newRow][newColumn+2] == State.Pawn.WHITE || isBlackCamp(newRow, newColumn+2))){ //viene mangiata la nera a destra
+                    board[newRow][newColumn+1] = State.Pawn.EMPTY;
+                }
+            }
+            if(newColumn>1) { // la pedina non è al bordo sinistro o nella seconda colonna
+                if (board[newRow][newColumn - 1] == State.Pawn.BLACK && (board[newRow][newColumn - 2] == State.Pawn.WHITE || isBlackCamp(newRow, newColumn - 2))) { //viene mangiata la nera a sinistra
+                    board[newRow][newColumn - 1] = State.Pawn.EMPTY;
+                }
+            }
+            if(rc.equals("24") && board[3][4] == State.Pawn.BLACK){ // viene mangiata la pedina sopra al castello
+                board[3][4] = State.Pawn.EMPTY;
+            }
+            if(rc.equals("46") && board[4][5] == State.Pawn.BLACK){ // viene mangiata la pedina a destra del castello
+                board[4][5] = State.Pawn.EMPTY;
+            }
+            if(rc.equals("64") && board[5][4] == State.Pawn.BLACK){ // viene mangiata la pedina sotto al castello
+                board[5][4] = State.Pawn.EMPTY;
+            }
+            if(rc.equals("42") && board[4][3] == State.Pawn.BLACK){ // viene mangiata la pedina a sinstra del castello
+                board[4][3] = State.Pawn.EMPTY;
+            }
+        }
+        if(movingPiece == State.Pawn.BLACK){
+            if(newRow<7){ // la pedina non è al bordo sotto o nella penultima riga
+                if((board[newRow+1][newColumn] == State.Pawn.WHITE || board[newRow+1][newColumn] == State.Pawn.KING) && (board[newRow+2][newColumn] == State.Pawn.BLACK || isBlackCamp(newRow+2, newColumn))){ //viene mangiata la bianca o il re sotto
+                    board[newRow+1][newColumn] = State.Pawn.EMPTY;
+                }
+            }
+            if(newRow>1){ // la pedina non è al bordo sopra o nella seconda riga
+                if((board[newRow-1][newColumn] == State.Pawn.WHITE || board[newRow-1][newColumn] == State.Pawn.KING) && (board[newRow-2][newColumn] == State.Pawn.BLACK || isBlackCamp(newRow-2, newColumn))){ //viene mangiata la bianca o il re sopra
+                    board[newRow-1][newColumn] = State.Pawn.EMPTY;
+                }
+            }
+            if(newColumn<7){ // la pedina non è al bordo destro o nella penultima colonna
+                if((board[newRow][newColumn+1] == State.Pawn.WHITE || board[newRow][newColumn+1] == State.Pawn.KING) && (board[newRow][newColumn+2] == State.Pawn.BLACK || isBlackCamp(newRow, newColumn+2))){ //viene mangiata la bianca o il re a destra
+                    board[newRow][newColumn+1] = State.Pawn.EMPTY;
+                }
+            }
+            if(newColumn>1){ // la pedina non è al bordo sinistro o nella seconda colonna
+                if((board[newRow][newColumn-1] == State.Pawn.WHITE || board[newRow][newColumn-1] == State.Pawn.WHITE) && (board[newRow][newColumn-2] == State.Pawn.BLACK|| isBlackCamp(newRow, newColumn-2))){ //viene mangiata la bianca o il re a sinistra
+                    board[newRow][newColumn-1] = State.Pawn.EMPTY;
+                }
+            }
+            if(rc.equals("24") && board[3][4] == State.Pawn.WHITE){ // viene mangiata la pedina sopra al castello
+                board[3][4] = State.Pawn.EMPTY;
+            }
+            if(rc.equals("46") && board[4][5] == State.Pawn.WHITE){ // viene mangiata la pedina a destra del castello
+                board[4][5] = State.Pawn.EMPTY;
+            }
+            if(rc.equals("64") && board[5][4] == State.Pawn.WHITE){ // viene mangiata la pedina sotto al castello
+                board[5][4] = State.Pawn.EMPTY;
+            }
+            if(rc.equals("42") && board[4][3] == State.Pawn.WHITE){ // viene mangiata la pedina a sinstra del castello
+                board[4][3] = State.Pawn.EMPTY;
+            }
+            String kingRowCol = "";
+            for (int row = 0; row < 9; row++) { // cerco la posizione del re
+                //ciclo sulle colonne della riga
+                for (int column = 0; column < 9; column++) {
+                    if(board[row][column]==State.Pawn.KING){
+                        kingRowCol=""+row+""+column;
+                    }
+                }
+            }
+            if(kingRowCol.equals("44") && state.board[3][4]==State.Pawn.BLACK && state.board[5][4]==State.Pawn.BLACK && state.board[4][3]==State.Pawn.BLACK && state.board[4][5]==State.Pawn.BLACK){ //re mangiato nel trono
+                board[4][4] = State.Pawn.EMPTY;
+            }
+            if(kingRowCol.equals("34") && state.board[2][4]==State.Pawn.BLACK && state.board[3][3]==State.Pawn.BLACK && state.board[3][5]==State.Pawn.BLACK) { //re mangiato da lato superiore trono
+                board[3][4] = State.Pawn.EMPTY;
+            }
+            if(kingRowCol.equals("43") && state.board[3][3]==State.Pawn.BLACK && state.board[4][2]==State.Pawn.BLACK && state.board[5][3]==State.Pawn.BLACK){ //re mangiato da lato sinistro trono
+                board[4][3] = State.Pawn.EMPTY;
+            }
+            if(kingRowCol.equals("54") && state.board[5][3]==State.Pawn.BLACK && state.board[6][4]==State.Pawn.BLACK && state.board[5][5]==State.Pawn.BLACK){ //re mangiato da lato inferiore trono
+                board[5][4] = State.Pawn.EMPTY;
+            }
+            if(kingRowCol.equals("45") && state.board[3][5]==State.Pawn.BLACK && state.board[4][5]==State.Pawn.BLACK && state.board[5][5]==State.Pawn.BLACK){ //re mangiato da lato destro trono
+                board[4][5] = State.Pawn.EMPTY;
+            }
+
+        }
+        return board;
+    }
+
+
 
     public double getValoreAssegnato() {
         return valoreAssegnato;
@@ -252,38 +354,7 @@ public class ExtendedState{
         }
 
         //caso re mangiato
-        if(kingRowCol.equals("44") && state.board[3][4]==State.Pawn.BLACK && state.board[5][4]==State.Pawn.BLACK && state.board[4][3]==State.Pawn.BLACK && state.board[4][5]==State.Pawn.BLACK){
-            //re mangiato nel trono
-            if(player=="BLACK") return 1;
-            else return -1;
-        }
-        if(kingRowCol.equals("34") && state.board[2][4]==State.Pawn.BLACK && state.board[3][3]==State.Pawn.BLACK && state.board[3][5]==State.Pawn.BLACK) {
-            //re mangiato da lato superiore trono
-            if(player=="BLACK") return 1;
-            else return -1;
-        }
-        if(kingRowCol.equals("43") && state.board[3][3]==State.Pawn.BLACK && state.board[4][2]==State.Pawn.BLACK && state.board[5][3]==State.Pawn.BLACK){
-            //re mangiato da lato sinistro trono
-            if(player=="BLACK") return 1;
-            else return -1;
-        }
-        if(kingRowCol.equals("54") && state.board[5][3]==State.Pawn.BLACK && state.board[6][4]==State.Pawn.BLACK && state.board[5][5]==State.Pawn.BLACK){
-            //re mangiato da lato inferiore trono
-            if(player=="BLACK") return 1;
-            else return -1;
-        }
-        if(kingRowCol.equals("45") && state.board[3][5]==State.Pawn.BLACK && state.board[4][5]==State.Pawn.BLACK && state.board[5][5]==State.Pawn.BLACK){
-            //re mangiato da lato destro trono
-            if(player=="BLACK") return 1;
-            else return -1;
-        }
-        if((state.board[kingRow-1][kingCol]==State.Pawn.BLACK || isBlackCamp(kingRow-1,kingCol)) && (state.board[kingRow+1][kingCol]==State.Pawn.BLACK || isBlackCamp(kingRow+1,kingCol))){
-            //re circondato in verticale
-            if(player=="BLACK") return 1;
-            else return -1;
-        }
-        if((state.board[kingRow][kingCol-1]==State.Pawn.BLACK || isBlackCamp(kingRow,kingCol-1)) && (state.board[kingRow][kingCol+1]==State.Pawn.BLACK || isBlackCamp(kingRow,kingCol+1))){
-            //re circondato in orizzontale
+        if(kingRowCol.equals("")){
             if(player=="BLACK") return 1;
             else return -1;
         }

@@ -145,9 +145,9 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
 
         if(state.state.turn==player) {
             v=maxValue3(state)
-
         }
         else v=minValue3(state)
+
         listaNodi.forEach{
             if(it.valoreAssegnato==v) nextState=it
         }
