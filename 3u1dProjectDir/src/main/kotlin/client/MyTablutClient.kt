@@ -1,7 +1,5 @@
 package client
 
-
-//import javafx.application.Application.launch
 import kotlinx.coroutines.*
 import server.ExtendedState
 import server.State
@@ -14,7 +12,8 @@ import kotlin.math.min
 class MyTablutClient(player : String, name : String, game: Int) : TablutClient(player,name) {
     private lateinit var listaNodi: ArrayList<ExtendedState>
     private var termina = false
-    private lateinit var initialState:ExtendedState
+    //private lateinit var initialState:ExtendedState
+    private var maxDepth: Int = 4
     private lateinit var extendedOldState : ExtendedState
 
     override fun run() = runBlocking {
@@ -138,15 +137,15 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
     }
 
     fun minMaxDecision(state: ExtendedState): ExtendedState{
-        this.initialState=state
+        //this.initialState=state
         listaNodi.clear()
         var nextState:ExtendedState=ExtendedState()
         var v:Double
 
         if(state.state.turn==player) {
-            v=maxValue(state)
+            v=maxValue(state,0)
         }
-        else v=minValue(state)
+        else v=minValue(state,0)
 
         listaNodi.forEach{
             if(it.valoreAssegnato==v) nextState=it
@@ -156,10 +155,10 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
     }
 
 
-        fun maxValue(state: ExtendedState):Double{
+        fun maxValue(state: ExtendedState, depth: Int):Double{
             var v:Double
             var terminale=state.isTerminal(player.toString())
-            if(terminale != -2 || termina){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
+            if(terminale != -2 || termina || depth==maxDepth){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
                 var numWhite=0
                 var numBlack=0
                 for (i in 0 until 8)
@@ -176,26 +175,26 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
             }
             println("nodo max: ${state.state.boardString()}")
             v = Double.NEGATIVE_INFINITY
-            if(state==initialState) {
+            if(depth==0) {
                 state.getActions().forEach {
                     //se sono i figli dello stato attuale del gioco li salvo in listaNodi per scegliere il migliore dopo
                     listaNodi.add(it)
-                    v = max(v, minValue(it))
+                    v = max(v, minValue(it, depth+1))
                 }
             }
             else{
                 state.getActions().forEach {
-                    v = max(v, minValue(it))
+                    v = max(v, minValue(it, depth+1))
                 }
             }
             state.valoreAssegnato =v
             return v
         }
 
-    fun minValue(state: ExtendedState):Double{
+    fun minValue(state: ExtendedState, depth: Int):Double{
         var v:Double
         var terminale=state.isTerminal(player.toString())
-        if(terminale != -2 || termina){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
+        if(terminale != -2 || termina || depth==maxDepth){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
             var numWhite=0
             var numBlack=0
             for (i in 0 until 8)
@@ -212,16 +211,16 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
         }
         println("nodo min: ${state.state.boardString()}")
         v = Double.POSITIVE_INFINITY
-        if(state==initialState) {
+        if(depth==0) {
             state.getActions().forEach {
                 //se sono i figli dello stato attuale del gioco li salvo in listaNodi per scegliere il migliore dopo
                 listaNodi.add(it)
-                v = min(v, maxValue(it))
+                v = min(v, maxValue(it, depth+1))
             }
         }
         else{
             state.getActions().forEach {
-                v = min(v, maxValue(it))
+                v = min(v, maxValue(it, depth+1))
             }
         }
         state.valoreAssegnato =v
