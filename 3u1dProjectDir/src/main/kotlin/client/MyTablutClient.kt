@@ -71,7 +71,7 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
             if (player == State.Turn.WHITE) {
                 // è il mio turno
                 if (currentState.turn == State.Turn.WHITE) {
-                    var extendedNewState = minMaxDecision2(extendedOldState)
+                    var extendedNewState = minMaxDecision(extendedOldState)
                     var a = extendedNewState.getAction(extendedOldState)
                     println("Mossa scelta: $a")
                     try {
@@ -104,7 +104,7 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
             } else {
                 // è il mio turno
                 if (currentState.turn == State.Turn.BLACK) {
-                    var extendedNewState = minMaxDecision2(extendedOldState)
+                    var extendedNewState = minMaxDecision(extendedOldState)
                     var a = extendedNewState.getAction(extendedOldState)
                     println("Mossa scelta: $a")
                     try {
@@ -137,16 +137,16 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
         }
     }
 
-    fun minMaxDecision2(state: ExtendedState): ExtendedState{
+    fun minMaxDecision(state: ExtendedState): ExtendedState{
         this.initialState=state
         listaNodi.clear()
         var nextState:ExtendedState=ExtendedState()
         var v:Double
 
         if(state.state.turn==player) {
-            v=maxValue3(state)
+            v=maxValue(state)
         }
-        else v=minValue3(state)
+        else v=minValue(state)
 
         listaNodi.forEach{
             if(it.valoreAssegnato==v) nextState=it
@@ -156,7 +156,7 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
     }
 
 
-        fun maxValue3(state: ExtendedState):Double{
+        fun maxValue(state: ExtendedState):Double{
             var v:Double
             var terminale=state.isTerminal(player.toString())
             if(terminale != -2 || termina){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
@@ -180,19 +180,19 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
                 state.getActions().forEach {
                     //se sono i figli dello stato attuale del gioco li salvo in listaNodi per scegliere il migliore dopo
                     listaNodi.add(it)
-                    v = max(v, minValue3(it))
+                    v = max(v, minValue(it))
                 }
             }
             else{
                 state.getActions().forEach {
-                    v = max(v, minValue3(it))
+                    v = max(v, minValue(it))
                 }
             }
             state.valoreAssegnato =v
             return v
         }
 
-    fun minValue3(state: ExtendedState):Double{
+    fun minValue(state: ExtendedState):Double{
         var v:Double
         var terminale=state.isTerminal(player.toString())
         if(terminale != -2 || termina){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
@@ -216,12 +216,12 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
             state.getActions().forEach {
                 //se sono i figli dello stato attuale del gioco li salvo in listaNodi per scegliere il migliore dopo
                 listaNodi.add(it)
-                v = min(v, maxValue3(it))
+                v = min(v, maxValue(it))
             }
         }
         else{
             state.getActions().forEach {
-                v = min(v, maxValue3(it))
+                v = min(v, maxValue(it))
             }
         }
         state.valoreAssegnato =v

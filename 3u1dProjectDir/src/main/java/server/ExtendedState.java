@@ -69,7 +69,7 @@ public class ExtendedState{
                     }
                 }
 
-                //turno del BIANCo
+                //turno del NERO
                 if(state.turn==State.Turn.BLACK){
                     //ricerca di una pedina bianca da muovere
                     if(this.state.board[row][column]==State.Pawn.BLACK) {
@@ -287,8 +287,10 @@ public class ExtendedState{
                 for (int column = 0; column < 9; column++) {
                     if(board[row][column]==State.Pawn.KING){
                         kingRowCol=""+row+""+column;
+                        break;
                     }
                 }
+                if(!kingRowCol.equals("")) break;
             }
             if(kingRowCol.equals("44") && state.board[3][4]==State.Pawn.BLACK && state.board[5][4]==State.Pawn.BLACK && state.board[4][3]==State.Pawn.BLACK && state.board[4][5]==State.Pawn.BLACK){ //re mangiato nel trono
                 board[4][4] = State.Pawn.EMPTY;
@@ -332,7 +334,7 @@ public class ExtendedState{
                 if(state.board[row][column]==State.Pawn.WHITE) whiteNum++;
                 if(state.board[row][column]==State.Pawn.KING){
                     whiteNum++;
-                    kingRow=row; kingCol=column;
+                    //kingRow=row; kingCol=column;
                     kingRowCol=""+row+""+column;
                 }
                 if(state.board[row][column]==State.Pawn.BLACK) blackNum++;
@@ -355,6 +357,7 @@ public class ExtendedState{
 
         //caso re mangiato
         if(kingRowCol.equals("")){
+            //il re non è stato trovato nella scacchiera (significa che è stato mangiato)
             if(player=="BLACK") return 1;
             else return -1;
         }
