@@ -364,9 +364,349 @@ public class ExtendedState{
         return -2;
     }
 
-    public double getUtility(String player, int terminale, int numWhite, int numBlack) {
-        //add some logic ritorna un double a partire dallo stato (euristica)
-        return 0;
+    private boolean isNearCamp(int row, int column){
+        if(isBlackCamp(row+1,column) || isBlackCamp(row-1,column) || isBlackCamp(row,column+1) || isBlackCamp(row,column-1))
+            return true;
+        else
+            return false;
+    }
+    private boolean isNearThrone(int row, int column){
+        if(this.getState().getBoard()[row+1][column] == State.Pawn.THRONE || this.getState().getBoard()[row-1][column] == State.Pawn.THRONE
+                || this.getState().getBoard()[row][column+1] == State.Pawn.THRONE || this.getState().getBoard()[row][column-1] == State.Pawn.THRONE)
+            return true;
+        else
+            return false;
     }
 
+
+    private int moveUp(int row, int column){
+        int finalRow=0;
+        for (  finalRow = row-1; finalRow < this.getState().getBoard().length; finalRow--)
+            if (!(this.getState().getBoard()[finalRow][column] == State.Pawn.EMPTY) && !isBlackCamp(finalRow,column))
+                break;
+        return finalRow;
+    }
+
+    private int moveLeft(int row, int column){
+        int finalColumn=0;
+        for (  finalColumn = column-1; finalColumn < this.getState().getBoard().length; finalColumn--)
+            if (!(this.getState().getBoard()[row][finalColumn] == State.Pawn.EMPTY) && !isBlackCamp(row,finalColumn))
+                break;
+        return finalColumn;
+    }
+
+    private int moveRight(int row, int column){
+        int finalColumn=0;
+        for (  finalColumn = column+1; finalColumn < this.getState().getBoard().length; finalColumn++)
+            if (!(this.getState().getBoard()[row][finalColumn] == State.Pawn.EMPTY) && !isBlackCamp(row,finalColumn))
+                break;
+        return finalColumn;
+    }
+
+    private int moveDown(int row, int column){
+        int finalRow=0;
+        for (  finalRow = row+1; finalRow < this.getState().getBoard().length; finalRow++)
+            if (!(this.getState().getBoard()[finalRow][column] == State.Pawn.EMPTY) && !isBlackCamp(finalRow,column))
+                break;
+        return finalRow;
+    }
+
+    public double getUtility(String player, int esitoPartita, int numBianche, int numNere) {
+        double value=0;
+        int mosse=0;
+        int bianchi=0;
+        int neri=0;
+        boolean onTheThrone=false;
+        int kingAccerchiato=0;
+        boolean nearCamp=false;
+        boolean nearThrone=false;
+        boolean vantaggioMangiate=false;
+        boolean svantaggioPedine=false;
+        boolean kingMangiabile=false;
+        boolean pedinaMangiabile= false;
+        boolean pedinaMangiata= false;
+        if(player.equals(State.Turn.WHITE)) {
+            //WHITE
+            if(esitoPartita != 2)
+                return esitoPartita;
+            for (int i = 0; i < 9; i++)
+                for (int j = 0; j < 9; j++) {
+                    if (this.getState().getBoard()[i][j] == State.Pawn.KING) {
+                        //RE SUL TRONO
+                        if(this.getState().getBoard()[i][j] == State.Pawn.THRONE)
+                            onTheThrone=true;
+                        //KING VINCE IN QUANTE MOSSE
+                        if(this.moveUp(i,j)==0 || this.moveDown(i,j)==8 || this.moveLeft(i,j)==0 || this.moveRight(i,j)==8)
+                            mosse=1;
+                        //KING MANGIABILE
+                        if(this.getState().getBoard()[i+1][j] == State.Pawn.BLACK || this.getState().getBoard()[i-1][j] == State.Pawn.BLACK
+                                || this.getState().getBoard()[i][j+1] == State.Pawn.BLACK || this.getState().getBoard()[i][j-1] == State.Pawn.BLACK)
+                            kingMangiabile=true;
+                    }
+                    //PEDINE MANGIATE BIANCHE O NERE
+                    if(this.getState().getBoard()[i][j] == State.Pawn.WHITE)
+                        bianchi++;
+                    if(this.getState().getBoard()[i][j] == State.Pawn.BLACK)
+                        neri++;
+                    //PEDINE MANGIATE O MANGIABILI
+                    if(this.getState().getBoard()[i][j] == State.Pawn.WHITE){
+                        if(this.getState().getBoard()[i+1][j] == State.Pawn.BLACK || isBlackCamp(i+1,j) || this.getState().getBoard()[i+1][j] == State.Pawn.THRONE) {
+                            if (this.getState().getBoard()[this.moveDown(i - 1, j)][j] == State.Pawn.BLACK || this.getState().getBoard()[i - 1][this.moveRight(i - 1, j)] == State.Pawn.BLACK
+                                    || this.getState().getBoard()[i - 1][this.moveLeft(i - 1, j)] == State.Pawn.BLACK)
+                                pedinaMangiabile = true;
+                            if (this.getState().getBoard()[this.moveUp(i + 2, j)][j] == State.Pawn.WHITE || this.getState().getBoard()[i + 2][this.moveRight(i + 2, j)] == State.Pawn.WHITE
+                                    || this.getState().getBoard()[i + 2][this.moveLeft(i + 2, j)] == State.Pawn.WHITE)
+                                pedinaMangiata = true;
+                        }
+                        if(this.getState().getBoard()[i-1][j] == State.Pawn.BLACK || isBlackCamp(i-1,j) || this.getState().getBoard()[i-1][j] == State.Pawn.THRONE) {
+                            if (this.getState().getBoard()[this.moveUp(i + 1, j)][j] == State.Pawn.BLACK || this.getState().getBoard()[i + 1][this.moveRight(i + 1, j)] == State.Pawn.BLACK
+                                    || this.getState().getBoard()[i + 1][this.moveLeft(i + 1, j)] == State.Pawn.BLACK)
+                                pedinaMangiabile = true;
+                            if (this.getState().getBoard()[this.moveDown(i - 2, j)][j] == State.Pawn.WHITE || this.getState().getBoard()[i - 2][this.moveRight(i - 2, j)] == State.Pawn.WHITE
+                                    || this.getState().getBoard()[i - 2][this.moveLeft(i - 2, j)] == State.Pawn.WHITE)
+                                pedinaMangiata = true;
+                        }
+                        if(this.getState().getBoard()[i][j-1] == State.Pawn.BLACK || isBlackCamp(i,j-1) || this.getState().getBoard()[i][j-1] == State.Pawn.THRONE) {
+                            if (this.getState().getBoard()[this.moveUp(i, j + 1)][j + 1] == State.Pawn.BLACK || this.getState().getBoard()[i][this.moveRight(i, j + 1)] == State.Pawn.BLACK
+                                    || this.getState().getBoard()[this.moveDown(i, j + 1)][j + 1] == State.Pawn.BLACK)
+                                pedinaMangiabile = true;
+                            if(this.getState().getBoard()[this.moveUp(i,j-2)][j-2] == State.Pawn.WHITE || this.getState().getBoard()[i][this.moveLeft(i,j-2)] == State.Pawn.WHITE
+                                    || this.getState().getBoard()[this.moveDown(i,j-2)][j-2] == State.Pawn.WHITE)
+                                pedinaMangiata=true;
+                        }
+                        if(this.getState().getBoard()[i][j+1] == State.Pawn.BLACK || isBlackCamp(i,j+1) || this.getState().getBoard()[i][j+1] == State.Pawn.THRONE) {
+                            if (this.getState().getBoard()[this.moveUp(i, j - 1)][j - 1] == State.Pawn.BLACK || this.getState().getBoard()[i][this.moveLeft(i, j - 1)] == State.Pawn.BLACK
+                                    || this.getState().getBoard()[this.moveDown(i, j - 1)][j - 1] == State.Pawn.BLACK)
+                                pedinaMangiabile = true;
+                            if (this.getState().getBoard()[this.moveUp(i, j + 2)][j + 2] == State.Pawn.WHITE || this.getState().getBoard()[i][this.moveRight(i, j + 2)] == State.Pawn.WHITE
+                                    || this.getState().getBoard()[this.moveDown(i, j + 2)][j + 2] == State.Pawn.WHITE)
+                                pedinaMangiata = true;
+                        }
+                    }
+                }
+            //CHI HA MANGIATO PIU PEDINE
+            if(numBianche-bianchi>numNere-neri+1)
+                svantaggioPedine=true;
+            if(numNere-neri>=numBianche-bianchi+3)
+                vantaggioMangiate=true;
+            if(kingMangiabile)
+                value=value-0.8;
+            else
+                value=value+0.8;
+            if(mosse==1)
+                value=value+0.6;
+            else
+                value=value-0.6;
+            if(onTheThrone)
+                value=value+0.2;
+            else
+                value=value-0.2;
+            if(vantaggioMangiate)
+                value=value+0.4;
+            else
+                value=value-0.4;
+            if(svantaggioPedine)
+                value=value-0.4;
+            else
+                value=value+0.4;
+            if(pedinaMangiabile)
+                value=value-0.2;
+            else
+                value=value+0.2;
+            if(pedinaMangiata)
+                value=value+0.1;
+            else
+                value=value-0.1;
+
+        }else{
+            //BLACK
+            if(esitoPartita != 2)
+                return esitoPartita;
+            for (int i = 0; i < 9; i++)
+                for (int j = 0; j < 9; j++) {
+                    if (this.getState().getBoard()[i][j] == State.Pawn.KING) {
+                        //RE SUL TRONO
+                        if (this.getState().getBoard()[i][j] == State.Pawn.THRONE)
+                            onTheThrone = true;
+                        //KING VINCE IN QUANTE MOSSE
+                        if (this.moveUp(i, j) == 0 || this.moveDown(i, j) == 8 || this.moveLeft(i, j) == 0 || this.moveRight(i, j) == 8)
+                            mosse = 1;
+                        //KING ACCERCHIATO
+                        if (this.getState().getBoard()[i + 1][j] == State.Pawn.BLACK || isBlackCamp(i + 1, j) || this.getState().getBoard()[i + 1][j] == State.Pawn.THRONE)
+                            kingAccerchiato = kingAccerchiato++;
+                        if (this.getState().getBoard()[i - 1][j] == State.Pawn.BLACK || isBlackCamp(i - 1, j) || this.getState().getBoard()[i - 1][j] == State.Pawn.THRONE)
+                            kingAccerchiato = kingAccerchiato++;
+                        if (this.getState().getBoard()[i][j + 1] == State.Pawn.BLACK || isBlackCamp(i, j + 1) || this.getState().getBoard()[i][j + 1] == State.Pawn.THRONE)
+                            kingAccerchiato = kingAccerchiato++;
+                        if (this.getState().getBoard()[i][j - 1] == State.Pawn.BLACK || isBlackCamp(i, j - 1) || this.getState().getBoard()[i][j - 1] == State.Pawn.THRONE)
+                            kingAccerchiato = kingAccerchiato++;
+                        //KING MANGIABILE
+                        if (isNearCamp(i, j)) {
+                            nearCamp = true;
+                            if (isBlackCamp(i + 1, j))
+                                if (this.getState().getBoard()[this.moveDown(i - 1, j)][j] == State.Pawn.BLACK || this.getState().getBoard()[i - 1][this.moveRight(i - 1, j)] == State.Pawn.BLACK
+                                        || this.getState().getBoard()[i - 1][this.moveLeft(i - 1, j)] == State.Pawn.BLACK)
+                                    kingMangiabile = true;
+                            if (isBlackCamp(i - 1, j))
+                                if (this.getState().getBoard()[this.moveUp(i + 1, j)][j] == State.Pawn.BLACK || this.getState().getBoard()[i + 1][this.moveRight(i + 1, j)] == State.Pawn.BLACK
+                                        || this.getState().getBoard()[i + 1][this.moveLeft(i + 1, j)] == State.Pawn.BLACK)
+                                    kingMangiabile = true;
+                            if (isBlackCamp(i, j + 1))
+                                if (this.getState().getBoard()[this.moveUp(i, j - 1)][j - 1] == State.Pawn.BLACK || this.getState().getBoard()[i][this.moveLeft(i, j - 1)] == State.Pawn.BLACK
+                                        || this.getState().getBoard()[this.moveDown(i, j - 1)][j - 1] == State.Pawn.BLACK)
+                                    kingMangiabile = true;
+                            if (isBlackCamp(i, j - 1))
+                                if (this.getState().getBoard()[this.moveUp(i, j + 1)][j + 1] == State.Pawn.BLACK || this.getState().getBoard()[i][this.moveRight(i, j + 1)] == State.Pawn.BLACK
+                                        || this.getState().getBoard()[this.moveDown(i, j + 1)][j + 1] == State.Pawn.BLACK)
+                                    kingMangiabile = true;
+                        }
+                        if (isNearThrone(i, j)) {
+                            nearThrone = true;
+                            if (this.getState().getBoard()[i + 1][j] == State.Pawn.EMPTY && kingAccerchiato == 3)
+                                if (this.getState().getBoard()[this.moveUp(i + 1, j)][j] == State.Pawn.BLACK || this.getState().getBoard()[i + 1][this.moveRight(i + 1, j)] == State.Pawn.BLACK
+                                        || this.getState().getBoard()[i + 1][this.moveLeft(i + 1, j)] == State.Pawn.BLACK)
+                                    kingMangiabile = true;
+                            if (this.getState().getBoard()[i - 1][j] == State.Pawn.EMPTY && kingAccerchiato == 3)
+                                if (this.getState().getBoard()[this.moveUp(i - 1, j)][j] == State.Pawn.BLACK || this.getState().getBoard()[i - 1][this.moveRight(i - 1, j)] == State.Pawn.BLACK
+                                        || this.getState().getBoard()[i - 1][this.moveLeft(i - 1, j)] == State.Pawn.BLACK)
+                                    kingMangiabile = true;
+                            if (this.getState().getBoard()[i][j + 1] == State.Pawn.EMPTY && kingAccerchiato == 3)
+                                if (this.getState().getBoard()[this.moveUp(i, j + 1)][j + 1] == State.Pawn.BLACK || this.getState().getBoard()[i][this.moveRight(i, j + 1)] == State.Pawn.BLACK
+                                        || this.getState().getBoard()[this.moveDown(i, j + 1)][j + 1] == State.Pawn.BLACK)
+                                    kingMangiabile = true;
+                            if (this.getState().getBoard()[i][j - 1] == State.Pawn.EMPTY && kingAccerchiato == 3)
+                                if (this.getState().getBoard()[this.moveUp(i, j - 1)][j - 1] == State.Pawn.BLACK || this.getState().getBoard()[i][this.moveLeft(i, j - 1)] == State.Pawn.BLACK
+                                        || this.getState().getBoard()[this.moveDown(i, j - 1)][j - 1] == State.Pawn.BLACK)
+                                    kingMangiabile = true;
+                        }
+
+                        if (onTheThrone && kingAccerchiato == 3) {
+                            if (this.getState().getBoard()[i + 1][j] == State.Pawn.EMPTY && kingAccerchiato == 3)
+                                if (this.getState().getBoard()[this.moveUp(i + 1, j)][j] == State.Pawn.BLACK || this.getState().getBoard()[i + 1][this.moveRight(i + 1, j)] == State.Pawn.BLACK
+                                        || this.getState().getBoard()[i + 1][this.moveLeft(i + 1, j)] == State.Pawn.BLACK)
+                                    kingMangiabile = true;
+                            if (this.getState().getBoard()[i - 1][j] == State.Pawn.EMPTY && kingAccerchiato == 3)
+                                if (this.getState().getBoard()[this.moveUp(i - 1, j)][j] == State.Pawn.BLACK || this.getState().getBoard()[i - 1][this.moveRight(i - 1, j)] == State.Pawn.BLACK
+                                        || this.getState().getBoard()[i - 1][this.moveLeft(i - 1, j)] == State.Pawn.BLACK)
+                                    kingMangiabile = true;
+                            if (this.getState().getBoard()[i][j + 1] == State.Pawn.EMPTY && kingAccerchiato == 3)
+                                if (this.getState().getBoard()[this.moveUp(i, j + 1)][j + 1] == State.Pawn.BLACK || this.getState().getBoard()[i][this.moveRight(i, j + 1)] == State.Pawn.BLACK
+                                        || this.getState().getBoard()[this.moveDown(i, j + 1)][j + 1] == State.Pawn.BLACK)
+                                    kingMangiabile = true;
+                            if (this.getState().getBoard()[i][j - 1] == State.Pawn.EMPTY && kingAccerchiato == 3)
+                                if (this.getState().getBoard()[this.moveUp(i, j - 1)][j - 1] == State.Pawn.BLACK || this.getState().getBoard()[i][this.moveLeft(i, j - 1)] == State.Pawn.BLACK
+                                        || this.getState().getBoard()[this.moveDown(i, j - 1)][j - 1] == State.Pawn.BLACK)
+                                    kingMangiabile = true;
+                        }
+                        if (this.getState().getBoard()[i + 1][j] == State.Pawn.BLACK && !isNearThrone(i, j) && !isNearCamp(i, j) && !onTheThrone) {
+                            if (this.getState().getBoard()[this.moveDown(i - 1, j)][j] == State.Pawn.BLACK || this.getState().getBoard()[i - 1][this.moveRight(i - 1, j)] == State.Pawn.BLACK
+                                    || this.getState().getBoard()[i - 1][this.moveLeft(i - 1, j)] == State.Pawn.BLACK)
+                                kingMangiabile = true;
+                        }
+                        if (this.getState().getBoard()[i - 1][j] == State.Pawn.BLACK && !isNearThrone(i, j) && !isNearCamp(i, j) && !onTheThrone) {
+                            if (this.getState().getBoard()[this.moveUp(i + 1, j)][j] == State.Pawn.BLACK || this.getState().getBoard()[i + 1][this.moveRight(i + 1, j)] == State.Pawn.BLACK
+                                    || this.getState().getBoard()[i + 1][this.moveLeft(i + 1, j)] == State.Pawn.BLACK)
+                                kingMangiabile = true;
+                        }
+                        if (this.getState().getBoard()[i][j - 1] == State.Pawn.BLACK && !isNearThrone(i, j) && !isNearCamp(i, j) && !onTheThrone) {
+                            if (this.getState().getBoard()[this.moveUp(i, j + 1)][j + 1] == State.Pawn.BLACK || this.getState().getBoard()[i][this.moveRight(i, j + 1)] == State.Pawn.BLACK
+                                    || this.getState().getBoard()[this.moveDown(i, j + 1)][j + 1] == State.Pawn.BLACK)
+                                kingMangiabile = true;
+                        }
+                        if (this.getState().getBoard()[i][j + 1] == State.Pawn.BLACK && !isNearThrone(i, j) && !isNearCamp(i, j) && !onTheThrone) {
+                            if (this.getState().getBoard()[this.moveUp(i, j - 1)][j - 1] == State.Pawn.BLACK || this.getState().getBoard()[i][this.moveLeft(i, j - 1)] == State.Pawn.BLACK
+                                    || this.getState().getBoard()[this.moveDown(i, j - 1)][j - 1] == State.Pawn.BLACK)
+                                kingMangiabile = true;
+                        }
+                    }
+                    //PEDINE MANGIATE BIANCHE O NERE
+                    if(this.getState().getBoard()[i][j] == State.Pawn.WHITE)
+                        bianchi++;
+                    if(this.getState().getBoard()[i][j] == State.Pawn.BLACK)
+                        neri++;
+                    //PEDINE MANGIATE O MANGIABILI
+                    if(this.getState().getBoard()[i][j] == State.Pawn.WHITE){
+                        if(this.getState().getBoard()[i+1][j] == State.Pawn.BLACK || isBlackCamp(i+1,j) || this.getState().getBoard()[i+1][j] == State.Pawn.THRONE) {
+                            if (this.getState().getBoard()[this.moveDown(i - 1, j)][j] == State.Pawn.BLACK || this.getState().getBoard()[i - 1][this.moveRight(i - 1, j)] == State.Pawn.BLACK
+                                    || this.getState().getBoard()[i - 1][this.moveLeft(i - 1, j)] == State.Pawn.BLACK)
+                                pedinaMangiata = true;
+                            if (this.getState().getBoard()[this.moveUp(i + 2, j)][j] == State.Pawn.WHITE || this.getState().getBoard()[i + 2][this.moveRight(i + 2, j)] == State.Pawn.WHITE
+                                    || this.getState().getBoard()[i + 2][this.moveLeft(i + 2, j)] == State.Pawn.WHITE)
+                                pedinaMangiabile = true;
+                        }
+                        if(this.getState().getBoard()[i-1][j] == State.Pawn.BLACK || isBlackCamp(i-1,j) || this.getState().getBoard()[i-1][j] == State.Pawn.THRONE) {
+                            if (this.getState().getBoard()[this.moveUp(i + 1, j)][j] == State.Pawn.BLACK || this.getState().getBoard()[i + 1][this.moveRight(i + 1, j)] == State.Pawn.BLACK
+                                    || this.getState().getBoard()[i + 1][this.moveLeft(i + 1, j)] == State.Pawn.BLACK)
+                                pedinaMangiata = true;
+                            if (this.getState().getBoard()[this.moveDown(i - 2, j)][j] == State.Pawn.WHITE || this.getState().getBoard()[i - 2][this.moveRight(i - 2, j)] == State.Pawn.WHITE
+                                    || this.getState().getBoard()[i - 2][this.moveLeft(i - 2, j)] == State.Pawn.WHITE)
+                                pedinaMangiabile = true;
+                        }
+                        if(this.getState().getBoard()[i][j-1] == State.Pawn.BLACK || isBlackCamp(i,j-1) || this.getState().getBoard()[i][j-1] == State.Pawn.THRONE) {
+                            if (this.getState().getBoard()[this.moveUp(i, j + 1)][j + 1] == State.Pawn.BLACK || this.getState().getBoard()[i][this.moveRight(i, j + 1)] == State.Pawn.BLACK
+                                    || this.getState().getBoard()[this.moveDown(i, j + 1)][j + 1] == State.Pawn.BLACK)
+                                pedinaMangiata= true;
+                            if(this.getState().getBoard()[this.moveUp(i,j-2)][j-2] == State.Pawn.WHITE || this.getState().getBoard()[i][this.moveLeft(i,j-2)] == State.Pawn.WHITE
+                                    || this.getState().getBoard()[this.moveDown(i,j-2)][j-2] == State.Pawn.WHITE)
+                                pedinaMangiabile=true;
+                        }
+                        if(this.getState().getBoard()[i][j+1] == State.Pawn.BLACK || isBlackCamp(i,j+1) || this.getState().getBoard()[i][j+1] == State.Pawn.THRONE) {
+                            if (this.getState().getBoard()[this.moveUp(i, j - 1)][j - 1] == State.Pawn.BLACK || this.getState().getBoard()[i][this.moveLeft(i, j - 1)] == State.Pawn.BLACK
+                                    || this.getState().getBoard()[this.moveDown(i, j - 1)][j - 1] == State.Pawn.BLACK)
+                                pedinaMangiata = true;
+                            if (this.getState().getBoard()[this.moveUp(i, j + 2)][j + 2] == State.Pawn.WHITE || this.getState().getBoard()[i][this.moveRight(i, j + 2)] == State.Pawn.WHITE
+                                    || this.getState().getBoard()[this.moveDown(i, j + 2)][j + 2] == State.Pawn.WHITE)
+                                pedinaMangiabile = true;
+                        }
+                    }
+                }
+            //CHI HA MANGIATO PIU PEDINE
+            if(numNere-neri>numBianche-bianchi+1)
+                svantaggioPedine=true;
+            if(numBianche-bianchi>=numNere-neri+3)
+                vantaggioMangiate=true;
+            //EURISTICA
+            if(onTheThrone && kingAccerchiato==1)
+                value=value+0.3;
+            if(onTheThrone && kingAccerchiato==2)
+                value=value+0.5;
+            if(onTheThrone && kingAccerchiato==3)
+                value=value+0.7;
+            if(nearCamp && kingAccerchiato==1)
+                value=value+0.5;
+            if(nearCamp && kingAccerchiato==2)
+                value=value+0.7;
+            if(nearThrone && kingAccerchiato==1)
+                value=value+0.3;
+            if(nearThrone && kingAccerchiato==2)
+                value=value+0.5;
+            if(nearThrone && kingAccerchiato==3)
+                value=value+0.7;
+            if(!nearThrone && !nearCamp && !onTheThrone && kingAccerchiato== 1)
+                value=value+0.7;
+            if(kingMangiabile)
+                value=value+0.3;
+            if(mosse==1)
+                value=value-0.6;
+            if(onTheThrone)
+                value=value-0.2;
+            if(vantaggioMangiate)
+                value=value+0.4;
+            else
+                value=value-0.4;
+            if(svantaggioPedine)
+                value=value-0.4;
+            else
+                value=value+0.4;
+            if(pedinaMangiabile)
+                value=value-0.2;
+            else
+                value=value+0.2;
+            if(pedinaMangiata)
+                value=value+0.1;
+            else
+                value=value-0.1;
+        }
+        return value;
+    }
 }
