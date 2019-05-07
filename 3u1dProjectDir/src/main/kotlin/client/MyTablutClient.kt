@@ -13,8 +13,12 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
     private lateinit var listaNodi: ArrayList<ExtendedState>
     private var termina = false
     //private lateinit var initialState:ExtendedState
-    private var maxDepth: Int = 4
+    private var maxDepth: Int = 3
     private lateinit var extendedOldState : ExtendedState
+
+    fun setTermina(termina: Boolean) {
+        this.termina=termina
+    }
 
     override fun run() = runBlocking {
         /*launch: lancia la coroutine nello stesso scope della coroutine che esegue run
@@ -60,9 +64,10 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
 				System.exit(1)
 			}
             launch{
-                delay(60000)
+                delay(10000)
                 //channel.send(1)
-                termina=true
+                println("tempo terminato")
+                setTermina(true)
             }
             var state = getCurrentState()
             println(state.toString())
@@ -139,7 +144,7 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
     fun minMaxDecision(state: ExtendedState): ExtendedState{
         //this.initialState=state
         listaNodi.clear()
-        var nextState:ExtendedState=ExtendedState()
+        var nextState=ExtendedState()
         var v:Double
 
         if(state.state.turn==player) {
@@ -161,8 +166,8 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
             if(terminale != -2 || termina || depth==maxDepth){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
                 var numWhite=0
                 var numBlack=0
-                for (i in 0 until 8)
-                    for (j in 0 until 8) {
+                for (i in 0..8)
+                    for (j in 0..8) {
                         if (extendedOldState.state.board[i][j] === State.Pawn.WHITE)
                             numWhite++
                         if (extendedOldState.state.board[i][j] === State.Pawn.BLACK)
@@ -170,10 +175,10 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
                     }
                 val ev=state.getUtility(player.toString(), terminale, numWhite, numBlack)
                 state.valoreAssegnato =ev
-                println("nodo terminale: ${state.state.boardString()}, valore: ${ev}")
+                println("nodo terminale: \n${state.state.boardString()}, valore: ${ev}")
                 return ev
             }
-            println("nodo max: ${state.state.boardString()}")
+            println("nodo max: \n${state.state.boardString()}")
             v = Double.NEGATIVE_INFINITY
             if(depth==0) {
                 state.getActions().forEach {
@@ -197,8 +202,8 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
         if(terminale != -2 || termina || depth==maxDepth){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
             var numWhite=0
             var numBlack=0
-            for (i in 0 until 8)
-                for (j in 0 until 8) {
+            for (i in 0..8)
+                for (j in 0..8) {
                     if (extendedOldState.state.board[i][j] === State.Pawn.WHITE)
                         numWhite++
                     if (extendedOldState.state.board[i][j] === State.Pawn.BLACK)
@@ -206,10 +211,10 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
                 }
             val ev=state.getUtility(player.toString(), terminale, numWhite, numBlack)
             state.valoreAssegnato =ev
-            println("nodo terminale: ${state.state.boardString()}, valore: ${ev}")
+            println("nodo terminale: \n${state.state.boardString()}, valore: ${ev}")
             return ev
         }
-        println("nodo min: ${state.state.boardString()}")
+        println("nodo min: \n${state.state.boardString()}")
         v = Double.POSITIVE_INFINITY
         if(depth==0) {
             state.getActions().forEach {

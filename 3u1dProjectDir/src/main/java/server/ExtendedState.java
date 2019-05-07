@@ -22,18 +22,25 @@ public class ExtendedState{
     }
 
     public Action getAction(ExtendedState oldState){
+        //System.out.println("new: \n"+state.boardString());
         Action a=null;
         String from= "";
         String to= "";
-        for (int i = 0; i < oldState.getState().getBoard().length; i++)
-            for (int j = 0; j < this.getState().getBoard().length; j++)
+        for (int i = 0; i < 9; i++)
+            for (int j = 0; j < 9; j++)
                 if (!this.getState().getBoard()[i][j].equals(oldState.getState().getBoard()[i][j])) {
                     if((oldState.getState().getBoard()[i][j]== State.Pawn.BLACK || oldState.getState().getBoard()[i][j]== State.Pawn.WHITE || oldState.getState().getBoard()[i][j]== State.Pawn.KING)
-                    && this.getState().getBoard()[i][j]== State.Pawn.EMPTY)
-                        from=from+i+j;
+                    && this.getState().getBoard()[i][j]== State.Pawn.EMPTY) {
+                        char col = (char)(j + 97);
+                        int row = i + 1;
+                        from = "" + col + row;
+                    }
                     if((this.getState().getBoard()[i][j]== State.Pawn.BLACK || this.getState().getBoard()[i][j]== State.Pawn.WHITE || this.getState().getBoard()[i][j]== State.Pawn.KING)
-                            && oldState.getState().getBoard()[i][j]== State.Pawn.EMPTY)
-                        to=to+i+j;
+                            && oldState.getState().getBoard()[i][j]== State.Pawn.EMPTY){
+                        char col = (char)(j + 97);
+                        int row = i + 1;
+                        to = "" + col + row;
+                    }
                 }
         if(this.getState().getTurn().equals(State.Turn.BLACK)) {
             try {
@@ -53,6 +60,7 @@ public class ExtendedState{
     }
 
     public List<ExtendedState> getActions(){
+        //System.out.println("GetActions - stato iniziale: \n"+ this.state.boardString());
         List<ExtendedState> actions = new LinkedList<>();
 
         //ciclo sulle righe
@@ -86,7 +94,7 @@ public class ExtendedState{
     private void columnMovements(List<ExtendedState> actions, int row, int column, State.Pawn movingPiece) {
         boolean legitMove=false;
         //ricerca di caselle vuote nella stessa colonna (controllando anche che non si tratti della stessa casella o del trono)
-        for(int newRow=0; newRow<this.state.board.length && newRow!=row; newRow++){
+        for(int newRow=0; newRow<9 && newRow!=row; newRow++){
 
             if(this.state.board[newRow][column]==State.Pawn.EMPTY && this.state.board[newRow][column] != State.Pawn.THRONE){
                 if(movingPiece==State.Pawn.WHITE){
@@ -118,16 +126,18 @@ public class ExtendedState{
                     }
                 }
                 if(legitMove){
-                    State.Pawn newBoard[][]=this.state.board.clone();
+                    //System.out.println("GetActions - this.state.board: \n"+ this.state.boardString());
+                    StateTablut newWrappedState=this.state.clone();
+                    State.Pawn newBoard[][]=newWrappedState.getBoard();
                     newBoard[row][column]=State.Pawn.EMPTY;
                     newBoard[newRow][column]=movingPiece;
                     newBoard=mangia(newBoard, newRow, column, movingPiece); // elimina le pedine mangiate se ce ne sono
-                    StateTablut newWrappedState= new StateTablut();
                     newWrappedState.setBoard(newBoard);
                     if(state.turn==State.Turn.WHITE) newWrappedState.setTurn(State.Turn.BLACK);
                     ExtendedState newState= new ExtendedState();
                     newState.setState(newWrappedState);
                     actions.add(newState);
+                    //System.out.println("GetActions - movimento verticale: \n"+ newState.getState().boardString());
                 }
             }
         }
@@ -136,7 +146,7 @@ public class ExtendedState{
     private void rowMovements(List<ExtendedState> actions, int row, int column, State.Pawn movingPiece){
         boolean legitMove=false;
         //ricerca di caselle vuote nella stessa riga (controllando anche che non si tratti della stessa casella o del trono)
-        for(int newColumn=0; newColumn<this.state.board.length && newColumn!=column; newColumn++){
+        for(int newColumn=0; newColumn<9 && newColumn!=column; newColumn++){
             if(this.state.board[row][newColumn]==State.Pawn.EMPTY && this.state.board[row][newColumn] != State.Pawn.THRONE){
                 if(movingPiece==State.Pawn.WHITE){
                     //controllo che non entri negli accampamenti
@@ -167,17 +177,19 @@ public class ExtendedState{
                     }
                 }
                 if(legitMove){
-                    State.Pawn newBoard[][]=this.state.board.clone();
+                    //System.out.println("GetActions - this.state.board: \n"+ this.state.boardString());
+                    StateTablut newWrappedState=this.state.clone();
+                    State.Pawn newBoard[][]=newWrappedState.getBoard();
                     newBoard[row][column]=State.Pawn.EMPTY;
                     newBoard[row][newColumn]=movingPiece;
                     newBoard=mangia(newBoard, row, newColumn, movingPiece); // elimina le pedine mangiate se ce ne sono
-                    StateTablut newWrappedState= new StateTablut();
                     newWrappedState.setBoard(newBoard);
                     if(state.turn==State.Turn.WHITE) newWrappedState.setTurn(State.Turn.BLACK);
                     else newWrappedState.setTurn(State.Turn.WHITE);
                     ExtendedState newState= new ExtendedState();
                     newState.setState(newWrappedState);
                     actions.add(newState);
+                    //System.out.println("GetActions - movimento orizzontale: \n"+ newState.getState().boardString());
                 }
             }
         }
