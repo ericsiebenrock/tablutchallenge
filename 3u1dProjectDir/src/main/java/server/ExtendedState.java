@@ -26,22 +26,24 @@ public class ExtendedState{
         Action a=null;
         String from= "";
         String to= "";
-        for (int i = 0; i < 9; i++)
-            for (int j = 0; j < 9; j++)
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
                 if (!this.getState().getBoard()[i][j].equals(oldState.getState().getBoard()[i][j])) {
-                    if((oldState.getState().getBoard()[i][j]== State.Pawn.BLACK || oldState.getState().getBoard()[i][j]== State.Pawn.WHITE || oldState.getState().getBoard()[i][j]== State.Pawn.KING)
-                    && this.getState().getBoard()[i][j]== State.Pawn.EMPTY) {
-                        char col = (char)(j + 97);
+                    if ((oldState.getState().getBoard()[i][j] == State.Pawn.BLACK || oldState.getState().getBoard()[i][j] == State.Pawn.WHITE || oldState.getState().getBoard()[i][j] == State.Pawn.KING)
+                            && this.getState().getBoard()[i][j] == State.Pawn.EMPTY) {
+                        char col = (char) (j + 97);
                         int row = i + 1;
                         from = "" + col + row;
                     }
-                    if((this.getState().getBoard()[i][j]== State.Pawn.BLACK || this.getState().getBoard()[i][j]== State.Pawn.WHITE || this.getState().getBoard()[i][j]== State.Pawn.KING)
-                            && oldState.getState().getBoard()[i][j]== State.Pawn.EMPTY){
-                        char col = (char)(j + 97);
+                    if ((this.getState().getBoard()[i][j] == State.Pawn.BLACK || this.getState().getBoard()[i][j] == State.Pawn.WHITE || this.getState().getBoard()[i][j] == State.Pawn.KING)
+                            && oldState.getState().getBoard()[i][j] == State.Pawn.EMPTY) {
+                        char col = (char) (j + 97);
                         int row = i + 1;
                         to = "" + col + row;
                     }
                 }
+            }
+        }
         if(this.getState().getTurn().equals(State.Turn.BLACK)) {
             try {
                 a=new Action(from,to,State.Turn.WHITE);
