@@ -148,24 +148,31 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
 
     fun minMaxDecision(state: ExtendedState): ExtendedState{
         //this.initialState=state
+        var alfa=Double.NEGATIVE_INFINITY
+        var beta=Double.POSITIVE_INFINITY
         listaNodi.clear()
         var nextState=ExtendedState()
         var v:Double
 
         if((state.state.turn.toString() == "W" && player == "WHITE") || (state.state.turn.toString() == "B" && player == "BLACK")) {
-            v=maxValue(state,0)
+            v=maxValue(state,0, alfa, beta)
         }
-        else v=minValue(state,0)
+        else v=minValue(state,0, alfa, beta)
 
-        listaNodi.forEach{
-            if(it.valoreAssegnato==v) nextState=it
+        for(nodo in listaNodi){
+            if(nodo.valoreAssegnato==v) {
+                nextState=nodo
+                break
+            }
         }
 
         return nextState
     }
 
 
-    fun maxValue(state: ExtendedState, depth: Int):Double{
+    fun maxValue(state: ExtendedState, depth: Int, alfa: Double, beta: Double):Double{
+        var alfa=alfa //i parametri sono sempre val
+        var beta=beta
         var v:Double
         var terminale=state.isTerminal(player)
         if(terminale != -2 || tempoTerminato || depth==maxDepth){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
@@ -181,28 +188,33 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
             val ev=state.getUtility(player, terminale, numWhite, numBlack)
             state.valoreAssegnato = ev
             println("nodo terminale: \n${state.state.boardString()}, valore: ${ev}")
-            //readLine()
             return ev
         }
         println("nodo max: \n${state.state.boardString()}")
         v = Double.NEGATIVE_INFINITY
         if(depth==0) {
-            state.getActions().forEach {
+            for(nextState in state.getActions()) {
                 //se sono i figli dello stato attuale del gioco li salvo in listaNodi per scegliere il migliore dopo
-                listaNodi.add(it)
-                v = max(v, minValue(it, depth+1))
+                listaNodi.add(nextState)
+                v = max(v, minValue(nextState, depth+1, alfa, beta))
+                alfa = max(alfa, v)
+                if(beta<=alfa) break
             }
         }
         else{
-            state.getActions().forEach {
-                v = max(v, minValue(it, depth+1))
+            for(nextState in state.getActions()) {
+                v = max(v, minValue(nextState, depth+1, alfa, beta))
+                alfa = max(alfa, v)
+                if(beta<=alfa) break
             }
         }
         state.valoreAssegnato =v
         return v
     }
 
-    fun minValue(state: ExtendedState, depth: Int):Double{
+    fun minValue(state: ExtendedState, depth: Int, alfa: Double, beta: Double):Double{
+        var alfa=alfa //i parametri sono sempre val
+        var beta=beta
         var v:Double
         var terminale=state.isTerminal(player)
         if(terminale != -2 || tempoTerminato || depth==maxDepth){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
@@ -224,15 +236,19 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
         println("nodo min: \n${state.state.boardString()}")
         v = Double.POSITIVE_INFINITY
         if(depth==0) {
-            state.getActions().forEach {
+            for(nextState in state.getActions()){
                 //se sono i figli dello stato attuale del gioco li salvo in listaNodi per scegliere il migliore dopo
-                listaNodi.add(it)
-                v = min(v, maxValue(it, depth+1))
+                listaNodi.add(nextState)
+                v = min(v, maxValue(nextState, depth+1, alfa, beta))
+                beta = min(beta,v)
+                if(beta<=alfa) break
             }
         }
         else{
-            state.getActions().forEach {
-                v = min(v, maxValue(it, depth+1))
+            for(nextState in state.getActions()) {
+                v = min(v, maxValue(nextState, depth+1, alfa, beta))
+                beta = min(beta,v)
+                if(beta<=alfa) break
             }
         }
         state.valoreAssegnato =v

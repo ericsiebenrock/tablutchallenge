@@ -74,8 +74,12 @@ public class ExtendedState{
                 if(state.turn==State.Turn.WHITE){
                     //ricerca di una pedina bianca da muovere
                     if(this.state.board[row][column]==State.Pawn.WHITE) {
-                        rowMovements(actions, row, column, State.Pawn.WHITE);
                         columnMovements(actions, row, column, State.Pawn.WHITE);
+                        rowMovements(actions, row, column, State.Pawn.WHITE);
+                    }
+                    if(this.state.board[row][column]==State.Pawn.KING){
+                        columnMovements(actions, row, column, State.Pawn.KING);
+                        rowMovements(actions, row, column, State.Pawn.KING);
                     }
                 }
 
@@ -99,7 +103,7 @@ public class ExtendedState{
         for(int newRow=0; newRow<9 && newRow!=row; newRow++){
 
             if(this.state.board[newRow][column]==State.Pawn.EMPTY && this.state.board[newRow][column] != State.Pawn.THRONE){
-                if(movingPiece==State.Pawn.WHITE){
+                if(movingPiece==State.Pawn.WHITE || movingPiece==State.Pawn.KING){
                     //controllo che non entri negli accampamenti
                     if(isBlackCamp(newRow,column)) continue;
                 }
@@ -150,7 +154,7 @@ public class ExtendedState{
         //ricerca di caselle vuote nella stessa riga (controllando anche che non si tratti della stessa casella o del trono)
         for(int newColumn=0; newColumn<9 && newColumn!=column; newColumn++){
             if(this.state.board[row][newColumn]==State.Pawn.EMPTY && this.state.board[row][newColumn] != State.Pawn.THRONE){
-                if(movingPiece==State.Pawn.WHITE){
+                if(movingPiece==State.Pawn.WHITE || movingPiece==State.Pawn.KING){
                     //controllo che non entri negli accampamenti
                     if(isBlackCamp(row,newColumn)) continue;//prossimo ciclo for
                 }
