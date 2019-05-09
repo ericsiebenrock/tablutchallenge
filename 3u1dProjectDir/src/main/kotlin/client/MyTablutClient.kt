@@ -67,7 +67,7 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
                 // è il mio turno
                 if (currentState.turn == State.Turn.WHITE) {
                     GlobalScope.launch{
-                        delay(30000)
+                        delay(10000)
                         //channel.send(1)
                         println("tempo terminato")
                         //setTermina(true)
@@ -107,7 +107,7 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
                 // è il mio turno
                 if (currentState.turn == State.Turn.BLACK) {
                     GlobalScope.launch{
-                        delay(30000)
+                        delay(10000)
                         //channel.send(1)
                         println("tempo terminato")
                         //setTermina(true)
