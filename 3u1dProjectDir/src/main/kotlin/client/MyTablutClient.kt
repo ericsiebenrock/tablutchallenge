@@ -9,9 +9,10 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-class MyTablutClient(player : String, name : String, game: Int) : TablutClient(player,name) {
+class MyTablutClient(playerColor : String, name : String, game: Int) : TablutClient(playerColor ,name) {
     private lateinit var listaNodi: ArrayList<ExtendedState>
     private var tempoTerminato = false
+    private var player=playerColor
     //private lateinit var initialState:ExtendedState
     private var maxDepth: Int = 6
     private lateinit var extendedOldState : ExtendedState
@@ -62,7 +63,7 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
             var state = getCurrentState()
             println(state.toString())
             extendedOldState.setState(state)
-            if (player == State.Turn.WHITE) {
+            if (player == "WHITE") {
                 // è il mio turno
                 if (currentState.turn == State.Turn.WHITE) {
                     GlobalScope.launch{
@@ -151,7 +152,7 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
         var nextState=ExtendedState()
         var v:Double
 
-        if(state.state.turn==player) {
+        if((state.state.turn.toString() == "W" && player == "WHITE") || (state.state.turn.toString() == "B" && player == "BLACK")) {
             v=maxValue(state,0)
         }
         else v=minValue(state,0)
@@ -166,7 +167,7 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
 
     fun maxValue(state: ExtendedState, depth: Int):Double{
         var v:Double
-        var terminale=state.isTerminal(player.toString())
+        var terminale=state.isTerminal(player)
         if(terminale != -2 || tempoTerminato || depth==maxDepth){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
             var numWhite=0
             var numBlack=0
@@ -177,9 +178,10 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
                     if (extendedOldState.state.board[i][j] === State.Pawn.BLACK)
                         numBlack++
                 }
-            val ev=state.getUtility(player.toString(), terminale, numWhite, numBlack)
-            state.valoreAssegnato =ev
+            val ev=state.getUtility(player, terminale, numWhite, numBlack)
+            state.valoreAssegnato = ev
             println("nodo terminale: \n${state.state.boardString()}, valore: ${ev}")
+            //readLine()
             return ev
         }
         println("nodo max: \n${state.state.boardString()}")
@@ -202,7 +204,7 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
 
     fun minValue(state: ExtendedState, depth: Int):Double{
         var v:Double
-        var terminale=state.isTerminal(player.toString())
+        var terminale=state.isTerminal(player)
         if(terminale != -2 || tempoTerminato || depth==maxDepth){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
             var numWhite=0
             var numBlack=0
@@ -213,9 +215,10 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
                     if (extendedOldState.state.board[i][j] === State.Pawn.BLACK)
                         numBlack++
                 }
-            val ev=state.getUtility(player.toString(), terminale, numWhite, numBlack)
+            val ev=state.getUtility(player, terminale, numWhite, numBlack)
             state.valoreAssegnato =ev
             println("nodo terminale: \n${state.state.boardString()}, valore: ${ev}")
+            //readLine()
             return ev
         }
         println("nodo min: \n${state.state.boardString()}")
@@ -262,7 +265,7 @@ class MyTablutClient(player : String, name : String, game: Int) : TablutClient(p
             var name = "IA"
 
             if (args.isEmpty()) {
-                println("You must specify which player you are (WHITE or BLACK)");
+                println("You must specify which player you are (WHITE or BLACK)")
                 System.exit(-1)
             } else {
                 println(args[0])
