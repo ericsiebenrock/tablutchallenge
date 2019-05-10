@@ -22,7 +22,8 @@ public class ExtendedState{
     }
 
     public Action getAction(ExtendedState oldState){
-        //System.out.println("new: \n"+state.boardString());
+        System.out.println("old: \n"+oldState.state.boardString());
+        System.out.println("new: \n"+state.boardString());
         Action a=null;
         String from= "";
         String to= "";
@@ -34,16 +35,19 @@ public class ExtendedState{
                         char col = (char) (j + 97);
                         int row = i + 1;
                         from = "" + col + row;
+                        continue;
                     }
                     if ((this.getState().getBoard()[i][j] == State.Pawn.BLACK || this.getState().getBoard()[i][j] == State.Pawn.WHITE || this.getState().getBoard()[i][j] == State.Pawn.KING)
                             && oldState.getState().getBoard()[i][j] == State.Pawn.EMPTY) {
                         char col = (char) (j + 97);
                         int row = i + 1;
                         to = "" + col + row;
+                        continue;
                     }
                 }
             }
         }
+        System.out.println("from: "+from+" to: "+to);
         if(this.getState().getTurn().equals(State.Turn.BLACK)) {
             try {
                 a=new Action(from,to,State.Turn.WHITE);
@@ -71,20 +75,20 @@ public class ExtendedState{
             for (int column = 0; column < this.state.board.length; column++){
 
                 //turno del BIANCO
-                if(state.turn==State.Turn.WHITE){
+                if(this.state.turn==State.Turn.WHITE){
                     //ricerca di una pedina bianca da muovere
                     if(this.state.board[row][column]==State.Pawn.WHITE) {
                         columnMovements(actions, row, column, State.Pawn.WHITE);
                         rowMovements(actions, row, column, State.Pawn.WHITE);
                     }
-                    if(this.state.board[row][column]==State.Pawn.KING){
+                    else if(this.state.board[row][column]==State.Pawn.KING){
                         columnMovements(actions, row, column, State.Pawn.KING);
                         rowMovements(actions, row, column, State.Pawn.KING);
                     }
                 }
 
                 //turno del NERO
-                if(state.turn==State.Turn.BLACK){
+                if(this.state.turn==State.Turn.BLACK){
                     //ricerca di una pedina bianca da muovere
                     if(this.state.board[row][column]==State.Pawn.BLACK) {
                         rowMovements(actions, row, column, State.Pawn.BLACK);
@@ -234,22 +238,22 @@ public class ExtendedState{
         String rc = "" + newRow + newColumn;
         if(movingPiece == State.Pawn.WHITE){
             if(newRow<7){ // la pedina non è al bordo sotto o nella penultima riga
-                if(board[newRow+1][newColumn] == State.Pawn.BLACK && (board[newRow+2][newColumn] == State.Pawn.WHITE || isBlackCamp(newRow+2, newColumn))){ //viene mangiata la nera sotto
+                if(board[newRow+1][newColumn] == State.Pawn.BLACK && (board[newRow+2][newColumn] == State.Pawn.WHITE || (isBlackCamp(newRow+2, newColumn) && !isBlackCamp(newRow+1,newColumn)))){ //viene mangiata la nera sotto (se non è nel campo)
                     board[newRow+1][newColumn] = State.Pawn.EMPTY;
                 }
             }
             if(newRow>1){ // la pedina non è al bordo sopra o nella seconda riga
-                if(board[newRow-1][newColumn] == State.Pawn.BLACK && (board[newRow-2][newColumn] == State.Pawn.WHITE || isBlackCamp(newRow-2, newColumn))){ //viene mangiata la nera sopra
+                if(board[newRow-1][newColumn] == State.Pawn.BLACK && (board[newRow-2][newColumn] == State.Pawn.WHITE || (isBlackCamp(newRow-2, newColumn) && !isBlackCamp(newRow-1,newColumn)))){ //viene mangiata la nera sopra (se non è nel campo)
                     board[newRow-1][newColumn] = State.Pawn.EMPTY;
                 }
             }
             if(newColumn<7){ // la pedina non è al bordo destro o nella penultima colonna
-                if(board[newRow][newColumn+1] == State.Pawn.BLACK && (board[newRow][newColumn+2] == State.Pawn.WHITE || isBlackCamp(newRow, newColumn+2))){ //viene mangiata la nera a destra
+                if(board[newRow][newColumn+1] == State.Pawn.BLACK && (board[newRow][newColumn+2] == State.Pawn.WHITE || (isBlackCamp(newRow, newColumn+2) && !isBlackCamp(newRow,newColumn+1)))){ //viene mangiata la nera a destra (se non è nel campo)
                     board[newRow][newColumn+1] = State.Pawn.EMPTY;
                 }
             }
             if(newColumn>1) { // la pedina non è al bordo sinistro o nella seconda colonna
-                if (board[newRow][newColumn - 1] == State.Pawn.BLACK && (board[newRow][newColumn - 2] == State.Pawn.WHITE || isBlackCamp(newRow, newColumn - 2))) { //viene mangiata la nera a sinistra
+                if (board[newRow][newColumn - 1] == State.Pawn.BLACK && (board[newRow][newColumn - 2] == State.Pawn.WHITE || (isBlackCamp(newRow, newColumn - 2) && !isBlackCamp(newRow,newColumn-1)))) { //viene mangiata la nera a sinistra (se non è nel campo)
                     board[newRow][newColumn - 1] = State.Pawn.EMPTY;
                 }
             }
@@ -493,11 +497,11 @@ public class ExtendedState{
                         }
                         if(i!=0) {
                             if (this.getState().getBoard()[i - 1][j] == State.Pawn.BLACK || isBlackCamp(i - 1, j) || this.getState().getBoard()[i - 1][j] == State.Pawn.THRONE) {
-                               if(i!=8) {
-                                   if (this.getState().getBoard()[this.moveUp(i + 1, j)][j] == State.Pawn.BLACK || this.getState().getBoard()[i + 1][this.moveRight(i + 1, j)] == State.Pawn.BLACK
-                                           || this.getState().getBoard()[i + 1][this.moveLeft(i + 1, j)] == State.Pawn.BLACK)
-                                       pedinaMangiabile = true;
-                               }
+                                if(i!=8) {
+                                    if (this.getState().getBoard()[this.moveUp(i + 1, j)][j] == State.Pawn.BLACK || this.getState().getBoard()[i + 1][this.moveRight(i + 1, j)] == State.Pawn.BLACK
+                                            || this.getState().getBoard()[i + 1][this.moveLeft(i + 1, j)] == State.Pawn.BLACK)
+                                        pedinaMangiabile = true;
+                                }
                                 if(i!=1) {
                                     if (this.getState().getBoard()[this.moveDown(i - 2, j)][j] == State.Pawn.WHITE || this.getState().getBoard()[i - 2][this.moveRight(i - 2, j)] == State.Pawn.WHITE
                                             || this.getState().getBoard()[i - 2][this.moveLeft(i - 2, j)] == State.Pawn.WHITE)

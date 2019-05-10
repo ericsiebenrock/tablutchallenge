@@ -55,11 +55,11 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
         while (true) {
             tempoTerminato=false
             try {
-				read()
-			} catch (e: IOException) {
-				e.printStackTrace()
-				System.exit(1)
-			}
+                read()
+            } catch (e: IOException) {
+                e.printStackTrace()
+                System.exit(1)
+            }
             var state = getCurrentState()
             println(state.toString())
             extendedOldState.setState(state)
@@ -165,7 +165,7 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
                 break
             }
         }
-
+        //println("prossimo stato: ${nextState.state.boardString()}")
         return nextState
     }
 
@@ -255,24 +255,24 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
         return v
     }
 
-       /*
-        fun minMaxDecision(state: ExtendedState) : ExtendedState {
-            return extendedState.getActions().stream().max(Comparator.comparing(::minValue)).get()
-        }
+    /*
+     fun minMaxDecision(state: ExtendedState) : ExtendedState {
+         return extendedState.getActions().stream().max(Comparator.comparing(::minValue)).get()
+     }
 
-       fun maxValue(state: ExtendedState) : Double {
-            if(state.isTerminal() || termina){
-                return state.getUtility()
-            }
-            return state.getActions().stream().map(::minValue).max(Comparator.comparing(Double::toDouble)).get();
-        }
+    fun maxValue(state: ExtendedState) : Double {
+         if(state.isTerminal() || termina){
+             return state.getUtility()
+         }
+         return state.getActions().stream().map(::minValue).max(Comparator.comparing(Double::toDouble)).get();
+     }
 
-        fun minValue(state: ExtendedState) : Double{
-            if(state.isTerminal() || termina){
-                return state.getUtility()
-            }
-            return state.getActions().stream().map(::maxValue).min(Comparator.comparing(Double::toDouble)).get();
-        }*/
+     fun minValue(state: ExtendedState) : Double{
+         if(state.isTerminal() || termina){
+             return state.getUtility()
+         }
+         return state.getActions().stream().map(::maxValue).min(Comparator.comparing(Double::toDouble)).get();
+     }*/
 
     companion object{
         fun main(args: Array<String>) {
