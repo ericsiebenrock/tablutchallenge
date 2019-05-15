@@ -558,6 +558,10 @@ public class ExtendedState{
                 value=value-0.1;
             if(pedinaMangiata)
                 value=value+0.3;
+            if(value>=1)
+                value=0.99;
+            if(value<=-1)
+                value=-0.99;
 
         }else{
             //BLACK
@@ -761,6 +765,10 @@ public class ExtendedState{
                 value=value-0.2;
             if(pedinaMangiata)
                 value=value+0.3;
+            if(value>=1)
+                value=0.99;
+            if(value<=-1)
+                value=-0.99;
         }
         return value;
     }
