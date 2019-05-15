@@ -547,21 +547,17 @@ public class ExtendedState{
             if(kingMangiabile)
                 value=value-0.5;
             if(mosse==1)
-                value=value+0.8;
+                value=value+0.5;
             if(onTheThrone)
                 value=value+0.1;
             if(vantaggioMangiate)
-                value=value+0.4;
+                value=value+0.2;
             if(svantaggioPedine)
-                value=value-0.4;
+                value=value-0.3;
             if(pedinaMangiabile)
                 value=value-0.1;
             if(pedinaMangiata)
-                value=value+0.3;
-            if(value>=1)
-                value=0.99;
-            if(value<=-1)
-                value=-0.99;
+                value=value+0.2;
 
         }else{
             //BLACK
@@ -736,39 +732,35 @@ public class ExtendedState{
                 vantaggioMangiate=true;
             //EURISTICA
             if(onTheThrone && kingAccerchiato==1)
-                value=value+0.3;
+                value=value+0.1;
             if(onTheThrone && kingAccerchiato==2)
-                value=value+0.5;
+                value=value+0.3;
             if(onTheThrone && kingAccerchiato==3)
-                value=value+0.7;
-            if(nearCamp)
-                value=value+0.7;
-            if(nearThrone && kingAccerchiato==1)
-                value=value+0.3;
-            if(nearThrone && kingAccerchiato==2)
                 value=value+0.5;
-            if(nearThrone && kingAccerchiato==3)
-                value=value+0.7;
-            if(!nearThrone && !nearCamp && !onTheThrone && kingAccerchiato== 1)
-                value=value+0.7;
-            if(kingMangiabile)
+            if(nearCamp)
+                value=value+0.5;
+            if(nearThrone && kingAccerchiato==1)
+                value=value+0.1;
+            if(nearThrone && kingAccerchiato==2)
                 value=value+0.3;
+            if(nearThrone && kingAccerchiato==3)
+                value=value+0.5;
+            if(!nearThrone && !nearCamp && !onTheThrone && kingAccerchiato== 1)
+                value=value+0.5;
+            if(kingMangiabile)
+                value=value+0.2;
             if(mosse==1)
-                value=value-1;
+                value=value-0.6;
             if(onTheThrone)
                 value=value-0.2;
             if(vantaggioMangiate)
-                value=value+0.4;
+                value=value+0.15;
             if(svantaggioPedine)
-                value=value-0.4;
-            if(pedinaMangiabile)
                 value=value-0.2;
+            if(pedinaMangiabile)
+                value=value-0.15;
             if(pedinaMangiata)
-                value=value+0.3;
-            if(value>=1)
-                value=0.99;
-            if(value<=-1)
-                value=-0.99;
+                value=value+0.1;
         }
         return value;
     }
