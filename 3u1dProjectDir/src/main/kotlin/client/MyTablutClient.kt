@@ -15,6 +15,7 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
     private var player=playerColor
     //private lateinit var initialState:ExtendedState
     private var maxDepth: Int = 6
+    private var maxTime: Long=10000
     private lateinit var extendedOldState : ExtendedState
 
     override fun run() = runBlocking {
@@ -66,8 +67,8 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
             if (player == "WHITE") {
                 // è il mio turno
                 if (currentState.turn == State.Turn.WHITE) {
-                    GlobalScope.launch{
-                        delay(50000)
+                    var timerJob = GlobalScope.launch{
+                        delay(maxTime)
                         //channel.send(1)
                         println("tempo terminato")
                         //setTermina(true)
@@ -76,6 +77,7 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
                     var extendedNewState = minMaxDecision(extendedOldState)
                     var a = extendedNewState.getAction(extendedOldState, player)
                     println("Mossa scelta: $a")
+                    timerJob.cancel()
                     try {
                         write(a)
                     } catch (e: IOException) {
@@ -106,8 +108,8 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
             } else {
                 // è il mio turno
                 if (currentState.turn == State.Turn.BLACK) {
-                    GlobalScope.launch{
-                        delay(50000)
+                    var timerJob = GlobalScope.launch{
+                        delay(maxTime)
                         //channel.send(1)
                         println("tempo terminato")
                         //setTermina(true)
@@ -116,6 +118,7 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
                     var extendedNewState = minMaxDecision(extendedOldState)
                     var a = extendedNewState.getAction(extendedOldState, player)
                     println("Mossa scelta: $a")
+                    timerJob.cancel()
                     try {
                         write(a)
                     } catch (e: IOException) {
