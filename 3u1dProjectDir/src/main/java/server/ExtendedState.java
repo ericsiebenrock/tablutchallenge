@@ -115,6 +115,7 @@ public class ExtendedState{
                     //controllo che non entri negli altri accampamenti. Se è nell accampamento (isBlackCamp(row, column)) si può muovere in esso.
                     //la distanza massima di caselle dello stesso accampamento infatti è 2
                     if(isBlackCamp(row, column) && isBlackCamp(newRow,column) && Math.abs(newRow-row)>2) continue;//prossimo ciclo for
+                    if(isBlackCamp(newRow,column)) continue;
                 }
                 //riga prima (spostamento verso alto)
                 if(newRow<row){
@@ -166,6 +167,7 @@ public class ExtendedState{
                     //controllo che non entri negli altri accampamenti. Se è nell accampamento (isBlackCamp(row, column)) si può muovere in esso.
                     //la distanza massima di caselle dello stesso accampamento infatti è 2
                     if(isBlackCamp(row, column) && isBlackCamp(row,newColumn) && Math.abs(newColumn-column)>2) continue;
+                    if(isBlackCamp(row,newColumn)) continue;
                 }
                 //colonna prima (spostamento a sinistra)
                 if(newColumn<column){
@@ -209,25 +211,19 @@ public class ExtendedState{
         boolean res=false;
         switch (row){
             case 0:
+            case 8:
                 if((column==3 || column==4 || column==5)) res=true;
                 break;
             case 1:
+            case 7:
                 if(column==4) res=true;
                 break;
             case 3:
+            case 5:
                 if(column==0 || column==8)res=true;
                 break;
             case 4:
                 if(column==0 || column==1 || column==7 || column==8) res=true;
-                break;
-            case 5:
-                if(column==0 || column==8)res=true;
-                break;
-            case 7:
-                if(column==4)res=true;
-                break;
-            case 8:
-                if((column==3 || column==4 || column==5)) res=true;
                 break;
 
         }

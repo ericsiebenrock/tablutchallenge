@@ -157,10 +157,10 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
         var nextState=ExtendedState()
         var v:Double
 
-        if((state.state.turn.toString() == "W" && player == "WHITE") || (state.state.turn.toString() == "B" && player == "BLACK")) {
-            v=maxValue(state,0, alfa, beta)
-        }
-        else v=minValue(state,0, alfa, beta)
+        //if((state.state.turn.toString() == "W" && player == "WHITE") || (state.state.turn.toString() == "B" && player == "BLACK")) {
+        v=maxValue(state,0, alfa, beta)
+        //}
+        //else v=minValue(state,0, alfa, beta)
 
         for(nodo in listaNodi){
             if(nodo.valoreAssegnato==v) {
@@ -191,7 +191,7 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
             val ev: Double
             if(terminale==1 || terminale==0 || terminale==-1) ev=terminale.toDouble()
             else ev=state.getUtility(player, terminale, numWhite, numBlack)
-            state.valoreAssegnato =ev
+            state.valoreAssegnato=ev
             println("nodo terminale: \n${state.state.boardString()}, valore: ${ev}")
             return ev
         }
