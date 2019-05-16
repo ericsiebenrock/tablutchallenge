@@ -110,12 +110,14 @@ public class ExtendedState{
                 if(movingPiece==State.Pawn.WHITE || movingPiece==State.Pawn.KING){
                     //controllo che non entri negli accampamenti
                     if(isBlackCamp(newRow,column)) continue;
+                    if(newRow==4 && column==4) continue; // non si può andare sul trono
                 }
                 if(movingPiece==State.Pawn.BLACK){
                     //controllo che non entri negli altri accampamenti. Se è nell accampamento (isBlackCamp(row, column)) si può muovere in esso.
                     //la distanza massima di caselle dello stesso accampamento infatti è 2
                     if(isBlackCamp(row, column) && isBlackCamp(newRow,column) && Math.abs(newRow-row)>2) continue;//prossimo ciclo for
                     if(isBlackCamp(newRow,column)) continue;
+                    if(newRow==4 && column==4) continue; // non si può andare sul trono
                 }
                 //riga prima (spostamento verso alto)
                 if(newRow<row){
@@ -162,12 +164,14 @@ public class ExtendedState{
                 if(movingPiece==State.Pawn.WHITE || movingPiece==State.Pawn.KING){
                     //controllo che non entri negli accampamenti
                     if(isBlackCamp(row,newColumn)) continue;//prossimo ciclo for
+                    if(row==4 && newColumn==4) continue; // non si può andare sul trono
                 }
                 if(movingPiece==State.Pawn.BLACK){
                     //controllo che non entri negli altri accampamenti. Se è nell accampamento (isBlackCamp(row, column)) si può muovere in esso.
                     //la distanza massima di caselle dello stesso accampamento infatti è 2
                     if(isBlackCamp(row, column) && isBlackCamp(row,newColumn) && Math.abs(newColumn-column)>2) continue;
                     if(isBlackCamp(row,newColumn)) continue;
+                    if(row==4 && newColumn==4) continue; // non si può andare sul trono
                 }
                 //colonna prima (spostamento a sinistra)
                 if(newColumn<column){

@@ -198,7 +198,9 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
         println("nodo max: \n${state.state.boardString()}")
         v = Double.NEGATIVE_INFINITY
         if(depth==0) {
+            println("caso depth==0")
             for(nextState in state.getActions()) {
+                println("nel loop getActions")
                 //se sono i figli dello stato attuale del gioco li salvo in listaNodi per scegliere il migliore dopo
                 listaNodi.add(nextState)
                 v = max(v, minValue(nextState, depth+1, alfa, beta))
@@ -207,7 +209,9 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
             }
         }
         else{
+            println("caso depth>0")
             for(nextState in state.getActions()) {
+                println("nel loop getActions")
                 v = max(v, minValue(nextState, depth+1, alfa, beta))
                 alfa = max(alfa, v)
                 if(beta<=alfa) break
