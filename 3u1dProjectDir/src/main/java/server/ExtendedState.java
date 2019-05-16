@@ -21,7 +21,7 @@ public class ExtendedState{
         return state;
     }
 
-    public Action getAction(ExtendedState oldState){
+    public Action getAction(ExtendedState oldState, String player){
         System.out.println("old: \n"+oldState.state.boardString());
         System.out.println("new: \n"+state.boardString());
         Action a=null;
@@ -30,14 +30,14 @@ public class ExtendedState{
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 if (!this.getState().getBoard()[i][j].equals(oldState.getState().getBoard()[i][j])) {
-                    if ((oldState.getState().getBoard()[i][j] == State.Pawn.BLACK || oldState.getState().getBoard()[i][j] == State.Pawn.WHITE || oldState.getState().getBoard()[i][j] == State.Pawn.KING)
+                    if (((oldState.getState().getBoard()[i][j] == State.Pawn.BLACK && player.equals("BLACK")) || (oldState.getState().getBoard()[i][j] == State.Pawn.WHITE && player.equals("WHITE"))|| (oldState.getState().getBoard()[i][j] == State.Pawn.KING && player.equals("WHITE")))
                             && this.getState().getBoard()[i][j] == State.Pawn.EMPTY) {
                         char col = (char) (j + 97);
                         int row = i + 1;
                         from = "" + col + row;
                         continue;
                     }
-                    if ((this.getState().getBoard()[i][j] == State.Pawn.BLACK || this.getState().getBoard()[i][j] == State.Pawn.WHITE || this.getState().getBoard()[i][j] == State.Pawn.KING)
+                    if (((this.getState().getBoard()[i][j] == State.Pawn.BLACK && player.equals("BLACK")) || (this.getState().getBoard()[i][j] == State.Pawn.WHITE && player.equals("WHITE")) || (this.getState().getBoard()[i][j] == State.Pawn.KING && player.equals("WHITE")))
                             && oldState.getState().getBoard()[i][j] == State.Pawn.EMPTY) {
                         char col = (char) (j + 97);
                         int row = i + 1;

@@ -74,7 +74,7 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
                         tempoTerminato = true
                     }
                     var extendedNewState = minMaxDecision(extendedOldState)
-                    var a = extendedNewState.getAction(extendedOldState)
+                    var a = extendedNewState.getAction(extendedOldState, player)
                     println("Mossa scelta: $a")
                     try {
                         write(a)
@@ -114,7 +114,7 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
                         tempoTerminato = true
                     }
                     var extendedNewState = minMaxDecision(extendedOldState)
-                    var a = extendedNewState.getAction(extendedOldState)
+                    var a = extendedNewState.getAction(extendedOldState, player)
                     println("Mossa scelta: $a")
                     try {
                         write(a)
@@ -185,8 +185,10 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
                     if (extendedOldState.state.board[i][j] === State.Pawn.BLACK)
                         numBlack++
                 }
-            val ev=state.getUtility(player, terminale, numWhite, numBlack)
-            state.valoreAssegnato = ev
+            val ev: Double
+            if(terminale==1 || terminale==0 || terminale==-1) ev=terminale.toDouble()
+            else ev=state.getUtility(player, terminale, numWhite, numBlack)
+            state.valoreAssegnato =ev
             println("nodo terminale: \n${state.state.boardString()}, valore: ${ev}")
             return ev
         }
@@ -227,7 +229,9 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
                     if (extendedOldState.state.board[i][j] === State.Pawn.BLACK)
                         numBlack++
                 }
-            val ev=state.getUtility(player, terminale, numWhite, numBlack)
+            val ev: Double
+            if(terminale==1 || terminale==0 || terminale==-1) ev=terminale.toDouble()
+            else ev=state.getUtility(player, terminale, numWhite, numBlack)
             state.valoreAssegnato =ev
             println("nodo terminale: \n${state.state.boardString()}, valore: ${ev}")
             //readLine()
