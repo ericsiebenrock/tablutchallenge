@@ -15,7 +15,7 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
     private var player=playerColor
     //private lateinit var initialState:ExtendedState
     private var maxDepth: Int = 6
-    private var maxTime: Long=10000
+    private var maxTime: Long=30000
     private lateinit var extendedOldState : ExtendedState
 
     override fun run() = runBlocking {
@@ -197,9 +197,10 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
         }
         println("nodo max: \n${state.state.boardString()}")
         v = Double.NEGATIVE_INFINITY
+        var nextActions = state.actions
         if(depth==0) {
             println("caso depth==0")
-            for(nextState in state.getActions()) {
+            for(nextState in nextActions) {
                 println("nel loop getActions")
                 //se sono i figli dello stato attuale del gioco li salvo in listaNodi per scegliere il migliore dopo
                 listaNodi.add(nextState)
@@ -210,7 +211,7 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
         }
         else{
             println("caso depth>0")
-            for(nextState in state.getActions()) {
+            for(nextState in nextActions) {
                 println("nel loop getActions")
                 v = max(v, minValue(nextState, depth+1, alfa, beta))
                 alfa = max(alfa, v)
@@ -246,8 +247,9 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
         }
         println("nodo min: \n${state.state.boardString()}")
         v = Double.POSITIVE_INFINITY
+        var nextActions = state.actions
         if(depth==0) {
-            for(nextState in state.getActions()){
+            for(nextState in nextActions){
                 //se sono i figli dello stato attuale del gioco li salvo in listaNodi per scegliere il migliore dopo
                 listaNodi.add(nextState)
                 v = min(v, maxValue(nextState, depth+1, alfa, beta))
@@ -256,7 +258,7 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
             }
         }
         else{
-            for(nextState in state.getActions()) {
+            for(nextState in nextActions) {
                 v = min(v, maxValue(nextState, depth+1, alfa, beta))
                 beta = min(beta,v)
                 if(beta<=alfa) break

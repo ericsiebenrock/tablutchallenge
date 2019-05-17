@@ -91,6 +91,7 @@ public class ExtendedState{
                 if(this.state.turn==State.Turn.BLACK){
                     //ricerca di una pedina bianca da muovere
                     if(this.state.board[row][column]==State.Pawn.BLACK) {
+                        System.out.println("Trovata pedina nera da spostare (row: "+row+" column: "+column+")");
                         rowMovements(actions, row, column, State.Pawn.BLACK);
                         columnMovements(actions, row, column, State.Pawn.BLACK);
                     }
@@ -102,7 +103,7 @@ public class ExtendedState{
     }
 
     private void columnMovements(List<ExtendedState> actions, int row, int column, State.Pawn movingPiece) {
-        boolean legitMove=false;
+        boolean legitMove=true, inBlackCamp=false;
         //ricerca di caselle vuote nella stessa colonna (controllando anche che non si tratti della stessa casella o del trono)
         for(int newRow=0; newRow<9 && newRow!=row; newRow++){
 
@@ -116,23 +117,29 @@ public class ExtendedState{
                     //controllo che non entri negli altri accampamenti. Se è nell accampamento (isBlackCamp(row, column)) si può muovere in esso.
                     //la distanza massima di caselle dello stesso accampamento infatti è 2
                     if(isBlackCamp(row, column) && isBlackCamp(newRow,column) && Math.abs(newRow-row)>2) continue;//prossimo ciclo for
-                    if(isBlackCamp(newRow,column)) continue;
+                    if(isBlackCamp(newRow,column)) inBlackCamp=true;
+
+                    if(isBlackCamp(newRow,column) && !isBlackCamp(row,column)) continue;
+
                     if(newRow==4 && column==4) continue; // non si può andare sul trono
                 }
                 //riga prima (spostamento verso alto)
-                if(newRow<row){
+                if(newRow<row && (newRow+1)!=row){ // se è la riga adiacente la mossa è lecita (già controllato che sia vuota)
+                    System.out.println("[cMovs] newRow<row: pedina su "+row+" "+column+" (newRow: "+newRow+")");
                     //controllo che le caselle in mezzo non siano occupate o non sia trono o accampamento
                     for (int i = (newRow + 1); i < row; i++) {
-                        if (this.state.board[i][column] != State.Pawn.EMPTY || this.state.board[i][column]==State.Pawn.THRONE || isBlackCamp(i,column)) {
+
+                        if (this.state.board[i][column] != State.Pawn.EMPTY || this.state.board[i][column]==State.Pawn.THRONE || (isBlackCamp(i,column) && (Math.abs(row-i)>2 || !inBlackCamp ))) {
                             legitMove = false; //casella in mezzo non vuota oppure trono oppure accampamento
                             break;
                         } else legitMove = true;
                     }
                 }
                 //riga dopo (spostamento verso basso)
-                else{
+                else if(newRow>row && (newRow-1)!=row){ // se è la riga adiacente la mossa è lecita (già controllato che sia vuota)
+                    System.out.println("[cMovs] newRow>row: pedina su "+row+" "+column+" (newRow: "+newRow+")");
                     for(int i=(newRow-1); i>row; i--) {
-                        if (this.state.board[i][column] != State.Pawn.EMPTY || this.state.board[row][i]==State.Pawn.THRONE || isBlackCamp(row,i)) {
+                        if (this.state.board[i][column] != State.Pawn.EMPTY || this.state.board[row][i]==State.Pawn.THRONE || (isBlackCamp(i,column) && (Math.abs(row-i)>2 || !inBlackCamp ))) {
                             legitMove = false; //casella in mezzo non vuota
                             break;
                         } else legitMove = true;
@@ -150,6 +157,7 @@ public class ExtendedState{
                     ExtendedState newState= new ExtendedState();
                     newState.setState(newWrappedState);
                     actions.add(newState);
+                    System.out.println("mossa lecita: \n"+newState.state.boardString());
                     //System.out.println("GetActions - movimento verticale: \n"+ newState.getState().boardString());
                 }
             }
@@ -157,36 +165,40 @@ public class ExtendedState{
     }
 
     private void rowMovements(List<ExtendedState> actions, int row, int column, State.Pawn movingPiece){
-        boolean legitMove=false;
+        boolean legitMove=true, inBlackCamp=false;
         //ricerca di caselle vuote nella stessa riga (controllando anche che non si tratti della stessa casella o del trono)
         for(int newColumn=0; newColumn<9 && newColumn!=column; newColumn++){
             if(this.state.board[row][newColumn]==State.Pawn.EMPTY && this.state.board[row][newColumn] != State.Pawn.THRONE){
                 if(movingPiece==State.Pawn.WHITE || movingPiece==State.Pawn.KING){
                     //controllo che non entri negli accampamenti
                     if(isBlackCamp(row,newColumn)) continue;//prossimo ciclo for
-                    if(row==4 && newColumn==4) continue; // non si può andare sul trono
+                    //if(row==4 && newColumn==4) continue; // non si può andare sul trono
                 }
                 if(movingPiece==State.Pawn.BLACK){
                     //controllo che non entri negli altri accampamenti. Se è nell accampamento (isBlackCamp(row, column)) si può muovere in esso.
                     //la distanza massima di caselle dello stesso accampamento infatti è 2
                     if(isBlackCamp(row, column) && isBlackCamp(row,newColumn) && Math.abs(newColumn-column)>2) continue;
-                    if(isBlackCamp(row,newColumn)) continue;
-                    if(row==4 && newColumn==4) continue; // non si può andare sul trono
+                    if(isBlackCamp(row,newColumn))inBlackCamp=true;
+                    if(isBlackCamp(row,newColumn)&&!isBlackCamp(row,column)) continue;
+                    //if(row==4 && newColumn==4) continue; // non si può andare sul trono
                 }
                 //colonna prima (spostamento a sinistra)
-                if(newColumn<column){
+                if(newColumn<column && (newColumn+1)!=column){ // se è la colonna adiacente la mossa è lecita (già controllato che sia vuota)
+                    System.out.println("[rMovs] newColumn<column: pedina su "+row+" "+column+" (newColumn: "+newColumn+")");
                     //controllo che le caselle in mezzo non siano occupate o non sia trono o accampamento
                     for (int i = (newColumn + 1); i < column; i++) {
-                        if (this.state.board[row][i] != State.Pawn.EMPTY || this.state.board[row][i]==State.Pawn.THRONE || isBlackCamp(row,i)) {
+                        // può passare dal (suo) blackCamp solo se ci è già dentro
+                        if (this.state.board[row][i] != State.Pawn.EMPTY || this.state.board[row][i]==State.Pawn.THRONE || (isBlackCamp(row,i) && (Math.abs(column-i)>2 || !inBlackCamp )) ) {
                             legitMove = false; //casella in mezzo non vuota oppure trono oppure accampamento
                             break;
                         } else legitMove = true;
                     }
                 }
                 //colonna dopo (spostamento a destra)
-                else{
+                else if(newColumn>column && (newColumn-1)!=column){ // se è la colonna adiacente la mossa è lecita (già controllato che sia vuota)
+                    System.out.println("[rMovs] newColumn>column: pedina su "+row+" "+column+" (newColumn: "+newColumn+")");
                     for(int i=(newColumn-1); i>column; i--) {
-                        if (this.state.board[row][i] != State.Pawn.EMPTY || this.state.board[row][i]==State.Pawn.THRONE || isBlackCamp(row,i)) {
+                        if (this.state.board[row][i] != State.Pawn.EMPTY || this.state.board[row][i]==State.Pawn.THRONE || (isBlackCamp(row,i) && (Math.abs(column-i)>2 || !inBlackCamp )) ) {
                             legitMove = false; //casella in mezzo non vuota
                             break;
                         } else legitMove = true;
@@ -205,6 +217,7 @@ public class ExtendedState{
                     ExtendedState newState= new ExtendedState();
                     newState.setState(newWrappedState);
                     actions.add(newState);
+                    System.out.println("mossa lecita: \n"+newState.state.boardString());
                     //System.out.println("GetActions - movimento orizzontale: \n"+ newState.getState().boardString());
                 }
             }
