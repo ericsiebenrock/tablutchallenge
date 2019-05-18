@@ -105,8 +105,8 @@ public class ExtendedState{
     private void columnMovements(List<ExtendedState> actions, int row, int column, State.Pawn movingPiece) {
         boolean legitMove=true, inBlackCamp=false;
         //ricerca di caselle vuote nella stessa colonna (controllando anche che non si tratti della stessa casella o del trono)
-        for(int newRow=0; newRow<9 && newRow!=row; newRow++){
-
+        for(int newRow=0; newRow<9; newRow++){
+            if(newRow==row) continue;
             if(this.state.board[newRow][column]==State.Pawn.EMPTY && this.state.board[newRow][column] != State.Pawn.THRONE){
                 if(movingPiece==State.Pawn.WHITE || movingPiece==State.Pawn.KING){
                     //controllo che non entri negli accampamenti
@@ -117,7 +117,7 @@ public class ExtendedState{
                     //controllo che non entri negli altri accampamenti. Se è nell accampamento (isBlackCamp(row, column)) si può muovere in esso.
                     //la distanza massima di caselle dello stesso accampamento infatti è 2
                     if(isBlackCamp(row, column) && isBlackCamp(newRow,column) && Math.abs(newRow-row)>2) continue;//prossimo ciclo for
-                    if(isBlackCamp(newRow,column)) inBlackCamp=true;
+                    if(isBlackCamp(row,column)) inBlackCamp=true;
 
                     if(isBlackCamp(newRow,column) && !isBlackCamp(row,column)) continue;
 
@@ -167,7 +167,8 @@ public class ExtendedState{
     private void rowMovements(List<ExtendedState> actions, int row, int column, State.Pawn movingPiece){
         boolean legitMove=true, inBlackCamp=false;
         //ricerca di caselle vuote nella stessa riga (controllando anche che non si tratti della stessa casella o del trono)
-        for(int newColumn=0; newColumn<9 && newColumn!=column; newColumn++){
+        for(int newColumn=0; newColumn<9; newColumn++){
+            if(newColumn==column) continue;
             if(this.state.board[row][newColumn]==State.Pawn.EMPTY && this.state.board[row][newColumn] != State.Pawn.THRONE){
                 if(movingPiece==State.Pawn.WHITE || movingPiece==State.Pawn.KING){
                     //controllo che non entri negli accampamenti
@@ -178,7 +179,7 @@ public class ExtendedState{
                     //controllo che non entri negli altri accampamenti. Se è nell accampamento (isBlackCamp(row, column)) si può muovere in esso.
                     //la distanza massima di caselle dello stesso accampamento infatti è 2
                     if(isBlackCamp(row, column) && isBlackCamp(row,newColumn) && Math.abs(newColumn-column)>2) continue;
-                    if(isBlackCamp(row,newColumn))inBlackCamp=true;
+                    if(isBlackCamp(row,column))inBlackCamp=true;
                     if(isBlackCamp(row,newColumn)&&!isBlackCamp(row,column)) continue;
                     //if(row==4 && newColumn==4) continue; // non si può andare sul trono
                 }
