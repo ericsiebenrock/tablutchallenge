@@ -462,6 +462,7 @@ public class ExtendedState{
         int neri=0;
         boolean onTheThrone=false;
         int kingAccerchiato=0;
+        int kingProtetto=0;
         boolean nearCamp=false;
         boolean nearThrone=false;
         boolean vantaggioMangiate=false;
@@ -482,6 +483,15 @@ public class ExtendedState{
                         //KING VINCE IN QUANTE MOSSE
                         if(this.moveUp(i,j)==0 || this.moveDown(i,j)==8 || this.moveLeft(i,j)==0 || this.moveRight(i,j)==8)
                             mosse=1;
+                        //KING PROTETTO
+                        if(this.getState().getBoard()[i+1][j] == State.Pawn.WHITE || this.getState().getBoard()[i+1][j] == State.Pawn.THRONE)
+                            kingProtetto++;
+                        if(this.getState().getBoard()[i-1][j] == State.Pawn.WHITE|| this.getState().getBoard()[i+1][j] == State.Pawn.THRONE)
+                            kingProtetto++;
+                        if(this.getState().getBoard()[i][j+1] == State.Pawn.WHITE|| this.getState().getBoard()[i+1][j] == State.Pawn.THRONE)
+                            kingProtetto++;
+                        if(this.getState().getBoard()[i][j-1] == State.Pawn.WHITE|| this.getState().getBoard()[i+1][j] == State.Pawn.THRONE)
+                            kingProtetto++;
                         //KING MANGIABILE
                         if(this.getState().getBoard()[i+1][j] == State.Pawn.BLACK || this.getState().getBoard()[i-1][j] == State.Pawn.BLACK
                                 || this.getState().getBoard()[i][j+1] == State.Pawn.BLACK || this.getState().getBoard()[i][j-1] == State.Pawn.BLACK)
@@ -557,6 +567,14 @@ public class ExtendedState{
                 svantaggioPedine=true;
             if(numNere-neri>=numBianche-bianchi+3)
                 vantaggioMangiate=true;
+            if(kingProtetto==1)
+                value=value+0.05;
+            if(kingProtetto==2)
+                value=value+0.15;
+            if(kingProtetto==3)
+                value=value+0.0;
+            if(kingProtetto==4)
+                value=value+0.0;
             if(kingMangiabile)
                 value=value-0.5;
             if(mosse==1)
@@ -570,7 +588,7 @@ public class ExtendedState{
             if(pedinaMangiabile)
                 value=value-0.1;
             if(pedinaMangiata)
-                value=value+0.2;
+                value=value+0.1;
 
         }else{
             //BLACK
