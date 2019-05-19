@@ -29,3 +29,10 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+jar {
+    println("executing jar")
+    manifest {
+        attributes 'Main-Class': 'client.MyTablutWhiteClient'
+    }
+}

@@ -22,8 +22,8 @@ public class ExtendedState{
     }
 
     public Action getAction(ExtendedState oldState, String player){
-        System.out.println("old: \n"+oldState.state.boardString());
-        System.out.println("new: \n"+state.boardString());
+        //System.out.println("old: \n"+oldState.state.boardString());
+        //System.out.println("new: \n"+state.boardString());
         Action a=null;
         String from= "";
         String to= "";
@@ -47,7 +47,7 @@ public class ExtendedState{
                 }
             }
         }
-        System.out.println("from: "+from+" to: "+to);
+        //System.out.println("from: "+from+" to: "+to);
         if(this.getState().getTurn().equals(State.Turn.BLACK)) {
             try {
                 a=new Action(from,to,State.Turn.WHITE);
@@ -91,7 +91,7 @@ public class ExtendedState{
                 if(this.state.turn==State.Turn.BLACK){
                     //ricerca di una pedina bianca da muovere
                     if(this.state.board[row][column]==State.Pawn.BLACK) {
-                        System.out.println("Trovata pedina nera da spostare (row: "+row+" column: "+column+")");
+                        //System.out.println("Trovata pedina nera da spostare (row: "+row+" column: "+column+")");
                         rowMovements(actions, row, column, State.Pawn.BLACK);
                         columnMovements(actions, row, column, State.Pawn.BLACK);
                     }
@@ -125,7 +125,7 @@ public class ExtendedState{
                 }
                 //riga prima (spostamento verso alto)
                 if(newRow<row && (newRow+1)!=row){ // se è la riga adiacente la mossa è lecita (già controllato che sia vuota)
-                    System.out.println("[cMovs] newRow<row: pedina su "+row+" "+column+" (newRow: "+newRow+")");
+                    //System.out.println("[cMovs] newRow<row: pedina su "+row+" "+column+" (newRow: "+newRow+")");
                     //controllo che le caselle in mezzo non siano occupate o non sia trono o accampamento
                     for (int i = (newRow + 1); i < row; i++) {
 
@@ -137,7 +137,7 @@ public class ExtendedState{
                 }
                 //riga dopo (spostamento verso basso)
                 else if(newRow>row && (newRow-1)!=row){ // se è la riga adiacente la mossa è lecita (già controllato che sia vuota)
-                    System.out.println("[cMovs] newRow>row: pedina su "+row+" "+column+" (newRow: "+newRow+")");
+                    //System.out.println("[cMovs] newRow>row: pedina su "+row+" "+column+" (newRow: "+newRow+")");
                     for(int i=(newRow-1); i>row; i--) {
                         if (this.state.board[i][column] != State.Pawn.EMPTY || this.state.board[row][i]==State.Pawn.THRONE || (isBlackCamp(i,column) && (Math.abs(row-i)>2 || !inBlackCamp ))) {
                             legitMove = false; //casella in mezzo non vuota
@@ -157,7 +157,7 @@ public class ExtendedState{
                     ExtendedState newState= new ExtendedState();
                     newState.setState(newWrappedState);
                     actions.add(newState);
-                    System.out.println("mossa lecita: \n"+newState.state.boardString());
+                    //System.out.println("mossa lecita: \n"+newState.state.boardString());
                     //System.out.println("GetActions - movimento verticale: \n"+ newState.getState().boardString());
                 }
             }
@@ -185,7 +185,7 @@ public class ExtendedState{
                 }
                 //colonna prima (spostamento a sinistra)
                 if(newColumn<column && (newColumn+1)!=column){ // se è la colonna adiacente la mossa è lecita (già controllato che sia vuota)
-                    System.out.println("[rMovs] newColumn<column: pedina su "+row+" "+column+" (newColumn: "+newColumn+")");
+                    //System.out.println("[rMovs] newColumn<column: pedina su "+row+" "+column+" (newColumn: "+newColumn+")");
                     //controllo che le caselle in mezzo non siano occupate o non sia trono o accampamento
                     for (int i = (newColumn + 1); i < column; i++) {
                         // può passare dal (suo) blackCamp solo se ci è già dentro
@@ -197,7 +197,7 @@ public class ExtendedState{
                 }
                 //colonna dopo (spostamento a destra)
                 else if(newColumn>column && (newColumn-1)!=column){ // se è la colonna adiacente la mossa è lecita (già controllato che sia vuota)
-                    System.out.println("[rMovs] newColumn>column: pedina su "+row+" "+column+" (newColumn: "+newColumn+")");
+                    //System.out.println("[rMovs] newColumn>column: pedina su "+row+" "+column+" (newColumn: "+newColumn+")");
                     for(int i=(newColumn-1); i>column; i--) {
                         if (this.state.board[row][i] != State.Pawn.EMPTY || this.state.board[row][i]==State.Pawn.THRONE || (isBlackCamp(row,i) && (Math.abs(column-i)>2 || !inBlackCamp )) ) {
                             legitMove = false; //casella in mezzo non vuota
@@ -218,7 +218,7 @@ public class ExtendedState{
                     ExtendedState newState= new ExtendedState();
                     newState.setState(newWrappedState);
                     actions.add(newState);
-                    System.out.println("mossa lecita: \n"+newState.state.boardString());
+                    //System.out.println("mossa lecita: \n"+newState.state.boardString());
                     //System.out.println("GetActions - movimento orizzontale: \n"+ newState.getState().boardString());
                 }
             }

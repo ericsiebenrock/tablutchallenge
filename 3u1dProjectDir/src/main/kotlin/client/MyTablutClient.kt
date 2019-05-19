@@ -14,7 +14,7 @@ class MyTablutClient(playerColor : String, maxTimeForMove : Long, name : String,
     private var tempoTerminato = false
     private var player=playerColor
     //private lateinit var initialState:ExtendedState
-    private var maxDepth: Int = 4
+    private var maxDepth: Int = 6
     private var maxTime = maxTimeForMove
     private lateinit var extendedOldState : ExtendedState
 
@@ -34,24 +34,6 @@ class MyTablutClient(playerColor : String, maxTimeForMove : Long, name : String,
         extendedOldState.state.turn = State.Turn.WHITE
         println("Ashton Tablut game")
         println("You are player $player!")
-        //val channel = Channel<Int>()
-        /* PER PROVARE
-        while(true){
-            println("cominciato turno")
-            termina=false
-            launch{
-                delay(60000)
-                //channel.send(1)
-                termina=true
-            }
-            while(true){
-                if(termina)
-                    break
-            }
-            println("terminato turno")
-        }
-
-         */
 
         while (true) {
             tempoTerminato=false
@@ -76,7 +58,7 @@ class MyTablutClient(playerColor : String, maxTimeForMove : Long, name : String,
                     }
                     var extendedNewState = minMaxDecision(extendedOldState)
                     var a = extendedNewState.getAction(extendedOldState, player)
-                    println("Mossa scelta: $a")
+                    //println("Mossa scelta: $a")
                     timerJob.cancel()
                     try {
                         write(a)
@@ -117,7 +99,7 @@ class MyTablutClient(playerColor : String, maxTimeForMove : Long, name : String,
                     }
                     var extendedNewState = minMaxDecision(extendedOldState)
                     var a = extendedNewState.getAction(extendedOldState, player)
-                    println("Mossa scelta: $a")
+                    //println("Mossa scelta: $a")
                     timerJob.cancel()
                     try {
                         write(a)
@@ -150,17 +132,14 @@ class MyTablutClient(playerColor : String, maxTimeForMove : Long, name : String,
     }
 
     fun minMaxDecision(state: ExtendedState): ExtendedState{
-        //this.initialState=state
+
         var alfa=Double.NEGATIVE_INFINITY
         var beta=Double.POSITIVE_INFINITY
         listaNodi.clear()
         var nextState=ExtendedState()
         var v:Double
 
-        //if((state.state.turn.toString() == "W" && player == "WHITE") || (state.state.turn.toString() == "B" && player == "BLACK")) {
         v=maxValue0(state, alfa, beta)
-        //}
-        //else v=minValue(state,0, alfa, beta)
 
         for(nodo in listaNodi){
             if(nodo.valoreAssegnato==v) {
@@ -168,7 +147,6 @@ class MyTablutClient(playerColor : String, maxTimeForMove : Long, name : String,
                 break
             }
         }
-        //println("prossimo stato: ${nextState.state.boardString()}")
         return nextState
     }
 
@@ -176,7 +154,6 @@ class MyTablutClient(playerColor : String, maxTimeForMove : Long, name : String,
         var newAlfa=alfa
         var v: Double
         v = Double.NEGATIVE_INFINITY
-        println("caso depth==0")
         var actions=state.actions
         for(nextState in actions) {
             //println("nel loop getActions")
@@ -215,10 +192,10 @@ class MyTablutClient(playerColor : String, maxTimeForMove : Long, name : String,
             if(terminale==1 || terminale==0 || terminale==-1) ev=terminale.toDouble()
             else ev=state.getUtility(player, terminale, numWhite, numBlack)
             //state.valoreAssegnato=ev
-            println("nodo terminale: \n${state.state.boardString()}, valore: ${ev}")
+            //println("nodo terminale: \n${state.state.boardString()}, valore: ${ev}")
             return ev
         }
-        println("nodo max: \n${state.state.boardString()}")
+        //println("nodo max: \n${state.state.boardString()}")
         v = Double.NEGATIVE_INFINITY
         //println("caso depth>0")
         var actions=state.actions
@@ -251,11 +228,11 @@ class MyTablutClient(playerColor : String, maxTimeForMove : Long, name : String,
             if(terminale==1 || terminale==0 || terminale==-1) ev=terminale.toDouble()
             else ev=state.getUtility(player, terminale, numWhite, numBlack)
             //state.valoreAssegnato =ev
-            println("nodo terminale: \n${state.state.boardString()}, valore: ${ev}")
+            //println("nodo terminale: \n${state.state.boardString()}, valore: ${ev}")
             //readLine()
             return ev
         }
-        println("nodo min: \n${state.state.boardString()}")
+        //println("nodo min: \n${state.state.boardString()}")
         v = Double.POSITIVE_INFINITY
         var actions=state.actions
         for(nextState in actions){
@@ -268,24 +245,6 @@ class MyTablutClient(playerColor : String, maxTimeForMove : Long, name : String,
         return v
     }
 
-    /*
-     fun minMaxDecision(state: ExtendedState) : ExtendedState {
-         return extendedState.getActions().stream().max(Comparator.comparing(::minValue)).get()
-     }
-
-    fun maxValue(state: ExtendedState) : Double {
-         if(state.isTerminal() || termina){
-             return state.getUtility()
-         }
-         return state.getActions().stream().map(::minValue).max(Comparator.comparing(Double::toDouble)).get();
-     }
-
-     fun minValue(state: ExtendedState) : Double{
-         if(state.isTerminal() || termina){
-             return state.getUtility()
-         }
-         return state.getActions().stream().map(::maxValue).min(Comparator.comparing(Double::toDouble)).get();
-     }*/
 
     companion object{
         fun main(args: Array<String>) {

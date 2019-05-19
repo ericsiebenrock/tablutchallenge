@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="TablutClient:jar" />
+    </artifacts-to-build>
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="bcc48e28-26f5-4ba9-b380-30d5404eccaf" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -26,8 +31,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/server/ExtendedState.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="49">
-              <caret line="774" column="49" lean-forward="true" selection-start-line="774" selection-start-column="49" selection-end-line="774" selection-end-column="49" />
+            <state relative-caret-position="174">
+              <caret line="49" column="25" selection-start-line="49" selection-start-column="21" selection-end-line="49" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -36,7 +41,16 @@
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/client/MyTablutClient.kt">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="170">
-              <caret line="16" column="33" selection-start-line="16" selection-start-column="33" selection-end-line="16" selection-end-column="33" />
+              <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="170">
+              <caret line="10" column="14" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -44,7 +58,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/client/TablutClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="211">
+            <state relative-caret-position="1173">
               <caret line="92" column="29" selection-start-line="92" selection-start-column="29" selection-end-line="92" selection-end-column="29" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -56,8 +70,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/client/MyTablutWhiteClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="13" column="1" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
+            <state>
+              <caret column="12" selection-start-column="12" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -93,6 +107,7 @@
       <find>clone</find>
       <find>listanodi</find>
       <find>foreach</find>
+      <find>prin</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -115,7 +130,7 @@
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-75" />
-    <option name="y" value="-39" />
+    <option name="y" value="-40" />
     <option name="width" value="3270" />
     <option name="height" value="2100" />
   </component>
@@ -125,12 +140,41 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
               <item name="TablutClient" type="b2602c69:ProjectViewProjectNode" />
               <item name="3u1dProjectDir" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="TablutClient" type="b2602c69:ProjectViewProjectNode" />
+              <item name="3u1dProjectDir" type="462c0819:PsiDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="TablutClient" type="b2602c69:ProjectViewProjectNode" />
+              <item name="3u1dProjectDir" type="462c0819:PsiDirectoryNode" />
+              <item name="gradle" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="TablutClient" type="b2602c69:ProjectViewProjectNode" />
+              <item name="3u1dProjectDir" type="462c0819:PsiDirectoryNode" />
+              <item name="out" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="TablutClient" type="b2602c69:ProjectViewProjectNode" />
+              <item name="3u1dProjectDir" type="462c0819:PsiDirectoryNode" />
+              <item name="out" type="462c0819:PsiDirectoryNode" />
+              <item name="artifacts" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="TablutClient" type="b2602c69:ProjectViewProjectNode" />
+              <item name="3u1dProjectDir" type="462c0819:PsiDirectoryNode" />
+              <item name="out" type="462c0819:PsiDirectoryNode" />
+              <item name="artifacts" type="462c0819:PsiDirectoryNode" />
+              <item name="TablutClient_jar" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="TablutClient" type="b2602c69:ProjectViewProjectNode" />
@@ -185,15 +229,14 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1558252743254" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1558278275479" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../.." />
+    <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.18110237" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
@@ -218,7 +261,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.MyTablutBlackClient (1)">
+  <component name="RunManager" selected="Application.MyTablutWhiteClient (1)">
     <configuration name="MyTablutBlackClient (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="client.MyTablutBlackClient" />
       <module name="it.unibo.3u1d.TablutClient.main" />
@@ -313,9 +356,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2080537" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21073826" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -324,16 +366,16 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.2733711" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3243626" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39958268" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.3286119" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5002767" side_tool="true" weight="0.32827735" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info active="true" anchor="bottom" id="Build" order="10" sideWeight="0.4997233" visible="true" weight="0.23510292" />
-      <window_info anchor="bottom" id="Messages" order="11" />
+      <window_info anchor="bottom" id="Build" order="10" sideWeight="0.4997233" weight="0.23510292" />
+      <window_info anchor="bottom" id="Messages" order="11" weight="0.14872521" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -392,13 +434,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/client/Prova.kt" />
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="638">
-          <caret line="22" column="33" selection-start-line="22" selection-start-column="33" selection-end-line="22" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar:///usr/lib/jvm/jdk1.8.0_181/src.zip!/java/io/DataInputStream.java" />
     <entry file="file://$PROJECT_DIR$/src/main/java/util/StreamUtils.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -407,27 +442,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/client/MyTablutWhiteClient.java">
+    <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
-          <caret line="13" column="1" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/server/ExtendedState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="49">
-          <caret line="774" column="49" lean-forward="true" selection-start-line="774" selection-start-column="49" selection-end-line="774" selection-end-column="49" />
+          <caret line="10" column="14" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="14" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/client/TablutClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
+        <state relative-caret-position="1173">
           <caret line="92" column="29" selection-start-line="92" selection-start-column="29" selection-end-line="92" selection-end-column="29" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/server/ExtendedState.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="174">
+          <caret line="49" column="25" selection-start-line="49" selection-start-column="21" selection-end-line="49" selection-end-column="25" />
         </state>
       </provider>
     </entry>
@@ -438,10 +473,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/client/MyTablutWhiteClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="12" selection-start-column="12" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/client/MyTablutClient.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
-          <caret line="16" column="33" selection-start-line="16" selection-start-column="33" selection-end-line="16" selection-end-column="33" />
+          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
         </state>
       </provider>
     </entry>
@@ -451,10 +493,12 @@
       <state key="ArtifactsStructureConfigurable.UI">
         <settings>
           <artifact-editor />
+          <last-edited>TablutClient:jar</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.2" />
+                <option value="0.18110237" />
+                <option value="0.5" />
               </list>
             </option>
           </splitter-proportions>
@@ -462,6 +506,7 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
+          <last-edited>Kotlin</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -484,6 +529,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
+          <last-edited>1.8</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -495,7 +541,7 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>TablutClient</last-edited>
+          <last-edited>3u1dProjectDir</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
