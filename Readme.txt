@@ -5,12 +5,12 @@ tre_uomini_e_una_donna.jar
 
 Per avviare il giocatore bianco:
 ---------------------------------------------------------------------------
-java -classpath tre_uomini_e_una_donna.jar.jar client.MyTablutWhiteClient
+java -classpath tre_uomini_e_una_donna.jar client.MyTablutWhiteClient
 ---------------------------------------------------------------------------
 
 Per avviare il giocatore nero:
 ---------------------------------------------------------------------------
-java -classpath tre_uomini_e_una_donna.jar.jar client.MyTablutBlackClient
+java -classpath tre_uomini_e_una_donna.jar client.MyTablutBlackClient
 ---------------------------------------------------------------------------
 
 Una volta avviato il giocatore chiede quanti secondi ha a disposizione per calcolare la mossa.
