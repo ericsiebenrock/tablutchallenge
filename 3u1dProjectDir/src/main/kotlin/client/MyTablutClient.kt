@@ -9,13 +9,13 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-class MyTablutClient(playerColor : String, name : String, game: Int) : TablutClient(playerColor ,name) {
+class MyTablutClient(playerColor : String, maxTimeForMove : Long, name : String, game: Int) : TablutClient(playerColor ,name) {
     private lateinit var listaNodi: ArrayList<ExtendedState>
     private var tempoTerminato = false
     private var player=playerColor
     //private lateinit var initialState:ExtendedState
-    private var maxDepth: Int = 6
-    private var maxTime: Long=30000
+    private var maxDepth: Int = 4
+    private var maxTime = maxTimeForMove
     private lateinit var extendedOldState : ExtendedState
 
     override fun run() = runBlocking {
@@ -158,7 +158,7 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
         var v:Double
 
         //if((state.state.turn.toString() == "W" && player == "WHITE") || (state.state.turn.toString() == "B" && player == "BLACK")) {
-        v=maxValue(state,0, alfa, beta)
+        v=maxValue0(state, alfa, beta)
         //}
         //else v=minValue(state,0, alfa, beta)
 
@@ -172,99 +172,99 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
         return nextState
     }
 
+    private fun maxValue0(state: ExtendedState, alfa: Double, beta: Double): Double {
+        var newAlfa=alfa
+        var v: Double
+        v = Double.NEGATIVE_INFINITY
+        println("caso depth==0")
+        var actions=state.actions
+        for(nextState in actions) {
+            //println("nel loop getActions")
+            //se sono i figli dello stato attuale del gioco li salvo in listaNodi per scegliere il migliore dopo
+            //listaNodi.add(nextState)
+            //var nextState_copia = ExtendedState()
+            //nextState_copia.setState(nextState.state)
+            //GlobalScope.launch {
+                v = max(v, minValue(nextState, 1, newAlfa, beta))
+                nextState.valoreAssegnato=v
+                listaNodi.add(nextState)
+                newAlfa = max(alfa, v)
+                if(beta<=newAlfa) break
+            //}
+        }
+        return v
+    }
+
 
     fun maxValue(state: ExtendedState, depth: Int, alfa: Double, beta: Double):Double{
-        var alfa=alfa //i parametri sono sempre val
-        var beta=beta
+        var newAlfa=alfa //i parametri sono sempre val
         var v:Double
-        var terminale=state.isTerminal(player)
-        if(terminale != -2 || tempoTerminato || depth==maxDepth){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
-            var numWhite=0
-            var numBlack=0
-            for (i in 0..8)
-                for (j in 0..8) {
-                    if (extendedOldState.state.board[i][j] === State.Pawn.WHITE)
-                        numWhite++
-                    if (extendedOldState.state.board[i][j] === State.Pawn.BLACK)
-                        numBlack++
-                }
+        var numWhite=0
+        var numBlack=0
+        for (i in 0..8) {
+            for (j in 0..8) {
+                if (extendedOldState.state.board[i][j] === State.Pawn.WHITE)
+                    numWhite++
+                if (extendedOldState.state.board[i][j] === State.Pawn.BLACK)
+                    numBlack++
+            }
+        }
+        var terminale=state.isTerminal(player, numWhite, numBlack)
+        if(terminale != -2 || depth==maxDepth || tempoTerminato){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
             val ev: Double
             if(terminale==1 || terminale==0 || terminale==-1) ev=terminale.toDouble()
             else ev=state.getUtility(player, terminale, numWhite, numBlack)
-            state.valoreAssegnato=ev
+            //state.valoreAssegnato=ev
             println("nodo terminale: \n${state.state.boardString()}, valore: ${ev}")
             return ev
         }
         println("nodo max: \n${state.state.boardString()}")
         v = Double.NEGATIVE_INFINITY
-        var nextActions = state.actions
-        if(depth==0) {
-            println("caso depth==0")
-            for(nextState in nextActions) {
-                println("nel loop getActions")
-                //se sono i figli dello stato attuale del gioco li salvo in listaNodi per scegliere il migliore dopo
-                listaNodi.add(nextState)
-                v = max(v, minValue(nextState, depth+1, alfa, beta))
-                alfa = max(alfa, v)
-                if(beta<=alfa) break
-            }
+        //println("caso depth>0")
+        var actions=state.actions
+        for(nextState in actions){
+            //println("nel loop getActions")
+            v = max(v, minValue(nextState, depth+1, newAlfa, beta))
+            newAlfa = max(alfa, v)
+            if(beta<=newAlfa) break
         }
-        else{
-            println("caso depth>0")
-            for(nextState in nextActions) {
-                println("nel loop getActions")
-                v = max(v, minValue(nextState, depth+1, alfa, beta))
-                alfa = max(alfa, v)
-                if(beta<=alfa) break
-            }
-        }
-        state.valoreAssegnato =v
+        //state.valoreAssegnato =v
         return v
     }
 
     fun minValue(state: ExtendedState, depth: Int, alfa: Double, beta: Double):Double{
-        var alfa=alfa //i parametri sono sempre val
-        var beta=beta
+        var newBeta=beta
         var v:Double
-        var terminale=state.isTerminal(player)
-        if(terminale != -2 || tempoTerminato || depth==maxDepth){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
-            var numWhite=0
-            var numBlack=0
-            for (i in 0..8)
-                for (j in 0..8) {
-                    if (extendedOldState.state.board[i][j] === State.Pawn.WHITE)
-                        numWhite++
-                    if (extendedOldState.state.board[i][j] === State.Pawn.BLACK)
-                        numBlack++
-                }
+        var numWhite=0
+        var numBlack=0
+        for (i in 0..8) {
+            for (j in 0..8) {
+                if (extendedOldState.state.board[i][j] === State.Pawn.WHITE)
+                    numWhite++
+                if (extendedOldState.state.board[i][j] === State.Pawn.BLACK)
+                    numBlack++
+            }
+        }
+        var terminale=state.isTerminal(player, numWhite, numBlack)
+        if(terminale != -2 || depth==maxDepth || tempoTerminato){   //isTerminal restituisce -> -2 = non terminale | -1 = terminale sconfitta | 0 = terminale pareggio | 1 = terminale vittoria | 2 = terminale
             val ev: Double
             if(terminale==1 || terminale==0 || terminale==-1) ev=terminale.toDouble()
             else ev=state.getUtility(player, terminale, numWhite, numBlack)
-            state.valoreAssegnato =ev
+            //state.valoreAssegnato =ev
             println("nodo terminale: \n${state.state.boardString()}, valore: ${ev}")
             //readLine()
             return ev
         }
         println("nodo min: \n${state.state.boardString()}")
         v = Double.POSITIVE_INFINITY
-        var nextActions = state.actions
-        if(depth==0) {
-            for(nextState in nextActions){
-                //se sono i figli dello stato attuale del gioco li salvo in listaNodi per scegliere il migliore dopo
-                listaNodi.add(nextState)
-                v = min(v, maxValue(nextState, depth+1, alfa, beta))
-                beta = min(beta,v)
-                if(beta<=alfa) break
-            }
+        var actions=state.actions
+        for(nextState in actions){
+            v = min(v, maxValue(nextState, depth+1, alfa, newBeta))
+            newBeta = min(beta,v)
+            if(newBeta<=alfa) break
+
         }
-        else{
-            for(nextState in nextActions) {
-                v = min(v, maxValue(nextState, depth+1, alfa, beta))
-                beta = min(beta,v)
-                if(beta<=alfa) break
-            }
-        }
-        state.valoreAssegnato =v
+        //state.valoreAssegnato =v
         return v
     }
 
@@ -292,24 +292,27 @@ class MyTablutClient(playerColor : String, name : String, game: Int) : TablutCli
             var gametype = 4
             var role = ""
             var name = "IA"
+            var maxTime : Long = 50000
 
             if (args.isEmpty()) {
-                println("You must specify which player you are (WHITE or BLACK)")
+                println("You must specify which player you are (WHITE or BLACK) and Time")
                 System.exit(-1)
             } else {
                 println(args[0])
                 role = args[0]
-            }
-            if (args.size == 2) {
                 println(args[1])
-                gametype = args[1].toInt()
+                maxTime = args[1].toLong() - 3000
             }
             if (args.size == 3) {
-                name = args[2]
+                println(args[2])
+                gametype = args[2].toInt()
             }
-            println("Selected client: ${args[0]}")
+            if (args.size == 4) {
+                name = args[3]
+            }
+            println("Selected client: ${args[0]}, maxTime: ${args[1]}")
 
-            var client = MyTablutClient(role, name, gametype)
+            var client = MyTablutClient(role, maxTime, name, gametype)
             client.run()
         }
     }

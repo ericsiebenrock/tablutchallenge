@@ -360,7 +360,7 @@ public class ExtendedState{
 
 
     //restituisce: -1 sconfitta, 0 pareggio, 1 vittoria, 2 stato terminale comunque (ci fermiamo TODO), -2 non è terminale
-    public int isTerminal(String player) {
+    public int isTerminal(String player, int numWhiteOld, int numBlackOld) {
         int whiteNum=0, blackNum=0, kingRow=-1, kingCol=-1;
         String kingRowCol="";
 
@@ -397,6 +397,11 @@ public class ExtendedState{
             if(player=="BLACK") return 1;
             else return -1;
         }
+
+        if((player == "WHITE" && numBlackOld > blackNum) || (player == "BLACK" && numWhiteOld > whiteNum)){
+            return 2;
+        }
+
         return -2;
     }
 
@@ -495,7 +500,7 @@ public class ExtendedState{
                             kingProtetto++;
                         //KING MANGIABILE
                         if(this.getState().getBoard()[i+1][j] == State.Pawn.BLACK || this.getState().getBoard()[i-1][j] == State.Pawn.BLACK
-                                || this.getState().getBoard()[i][j+1] == State.Pawn.BLACK || this.getState().getBoard()[i][j-1] == State.Pawn.BLACK)
+                                || this.getState().getBoard()[i][j+1] == State.Pawn.BLACK || this.getState().getBoard()[i][j-1] == State.Pawn.BLACK || isNearCamp(i, j))
                             kingMangiabile=true;
                     }
                     //PEDINE MANGIATE BIANCHE O NERE
@@ -566,7 +571,7 @@ public class ExtendedState{
             //CHI HA MANGIATO PIU PEDINE
             if(numBianche-bianchi>numNere-neri+1)
                 svantaggioPedine=true;
-            if(numNere-neri>=numBianche-bianchi+3)
+            if(numNere-neri>=numBianche-bianchi+1)
                 vantaggioMangiate=true;
             if(kingProtetto==1)
                 value=value+0.05;
@@ -583,7 +588,7 @@ public class ExtendedState{
             if(onTheThrone)
                 value=value+0.1;
             if(vantaggioMangiate)
-                value=value+0.2;
+                value=value+0.4;
             if(svantaggioPedine)
                 value=value-0.3;
             if(pedinaMangiabile)
@@ -760,23 +765,23 @@ public class ExtendedState{
             //CHI HA MANGIATO PIU PEDINE
             if(numNere-neri>numBianche-bianchi+1)
                 svantaggioPedine=true;
-            if(numBianche-bianchi>=numNere-neri+3)
+            if(numBianche-bianchi>=numNere-neri+1)
                 vantaggioMangiate=true;
             //EURISTICA
             if(onTheThrone && kingAccerchiato==1)
-                value=value+0.1;
+                value=value+0.2;
             if(onTheThrone && kingAccerchiato==2)
-                value=value+0.3;
+                value=value+0.4;
             if(onTheThrone && kingAccerchiato==3)
-                value=value+0.5;
+                value=value+0.6;
             if(nearCamp)
                 value=value+0.5;
             if(nearThrone && kingAccerchiato==1)
-                value=value+0.1;
+                value=value+0.2;
             if(nearThrone && kingAccerchiato==2)
-                value=value+0.3;
+                value=value+0.4;
             if(nearThrone && kingAccerchiato==3)
-                value=value+0.5;
+                value=value+0.6;
             if(!nearThrone && !nearCamp && !onTheThrone && kingAccerchiato== 1)
                 value=value+0.5;
             if(kingMangiabile)
@@ -786,7 +791,7 @@ public class ExtendedState{
             if(onTheThrone)
                 value=value-0.2;
             if(vantaggioMangiate)
-                value=value+0.15;
+                value=value+0.6;
             if(svantaggioPedine)
                 value=value-0.2;
             if(pedinaMangiabile)
