@@ -260,7 +260,7 @@ class MyTablutClient(playerColor : String, maxTimeForMove : Long, name : String,
                 println(args[0])
                 role = args[0]
                 println(args[1])
-                maxTime = args[1].toLong() - 3000
+                maxTime = args[1].toLong() - 3500
             }
             if (args.size == 3) {
                 println(args[2])
